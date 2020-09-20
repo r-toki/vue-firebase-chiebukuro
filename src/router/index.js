@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import LogIn from '@/views/LogIn.vue'
-import MyPage from '@/views/MyPage.vue'
-import SignUp from '@/views/SignUp.vue'
-
-import Home from '../views/Home.vue'
+import Home from '@/views/Home'
+import LogIn from '@/views/LogIn'
+import MyPage from '@/views/MyPage'
+import QuestionDetail from '@/views/QuestionDetail'
+import QuestionList from '@/views/QuestionList'
+import SignUp from '@/views/SignUp'
 
 Vue.use(VueRouter)
 
@@ -29,6 +30,16 @@ const routes = [
     path: '/my-page',
     name: 'MyPage',
     component: MyPage
+  },
+  {
+    path: '/question-detail/:id',
+    name: 'QuestionDetail',
+    component: QuestionDetail
+  },
+  {
+    path: '/question-list',
+    name: 'QuestionList',
+    component: QuestionList
   }
 ]
 
