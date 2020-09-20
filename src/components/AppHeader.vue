@@ -6,16 +6,16 @@
           <b-nav-item href="/"> Home </b-nav-item>
           <b-nav-item href="/"> +Ask </b-nav-item>
         </b-navbar-nav>
-        <template v-if="loggedIn !== null">
+        <template v-if="user.loggedIn">
           <b-navbar-nav class="ml-auto">
-            <b-nav-item href="/"> SignUp </b-nav-item>
-            <b-nav-item href="/"> LogIn </b-nav-item>
+            <b-nav-item href="/my-page"> MyPage </b-nav-item>
+            <b-nav-item @click.prevent="logOut"> LogOut </b-nav-item>
           </b-navbar-nav>
         </template>
         <template v-else>
           <b-navbar-nav class="ml-auto">
-            <b-nav-item href="/"> MyPage </b-nav-item>
-            <b-nav-item href="/"> LogOut </b-nav-item>
+            <b-nav-item href="/sign-up"> SignUp </b-nav-item>
+            <b-nav-item href="/log-in"> LogIn </b-nav-item>
           </b-navbar-nav>
         </template>
       </b-navbar>
@@ -24,8 +24,24 @@
 </template>
 
 <script>
+import firebase from 'firebase'
+import { mapGetters } from 'vuex'
+
 export default {
-  name: 'AppHeader'
+  name: 'AppHeader',
+  computed: {
+    ...mapGetters({ user: 'user' })
+  },
+  methods: {
+    logOut() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.$router.push('/')
+        })
+    }
+  }
 }
 </script>
 
