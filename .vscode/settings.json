@@ -4,5 +4,11 @@
     "source.fixAll.eslint": true
   },
   "eslint.format.enable": true,
-  "eslint.validate": ["javascript", "vue"]
+  "eslint.validate": [
+    "javascript",
+    "vue"
+  ],
+  "cSpell.words": [
+    "Vuex"
+  ]
 }

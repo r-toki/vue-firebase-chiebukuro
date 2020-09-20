@@ -9,6 +9,7 @@
 import AppHeader from '@/components/AppHeader'
 
 export default {
+  name: 'App',
   components: { AppHeader }
 }
 </script>
@@ -16,7 +17,9 @@ export default {
 <style lang="scss">
 @import '~bootstrap';
 @import '~bootstrap-vue';
+</style>
 
+<style scoped>
 .router-view {
   max-width: 960px;
   margin-left: auto;
