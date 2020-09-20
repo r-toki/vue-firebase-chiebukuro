@@ -3,6 +3,7 @@ module.exports = {
   env: {
     node: true
   },
+  plugins: ['simple-import-sort'],
   extends: ['plugin:vue/essential', 'eslint:recommended', '@vue/prettier'],
   parserOptions: {
     parser: 'babel-eslint'
@@ -16,6 +17,7 @@ module.exports = {
         singleQuote: true,
         semi: false
       }
-    ]
+    ],
+    'simple-import-sort/sort': 'error'
   }
 }
