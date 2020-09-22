@@ -52,6 +52,7 @@ export default {
   },
   methods: {
     ...mapActions(['fetchUser']),
+
     async onSubmit() {
       try {
         await this.signUp()
@@ -62,11 +63,13 @@ export default {
       await this.updateUser()
       this.$router.push('/my-page')
     },
+
     signUp() {
       return firebase
         .auth()
         .createUserWithEmailAndPassword(this.form.email, this.form.password)
     },
+
     updateUser() {
       return firebase
         .auth()

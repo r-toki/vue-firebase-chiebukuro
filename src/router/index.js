@@ -6,6 +6,7 @@ import LogIn from '@/views/LogIn'
 import MyPage from '@/views/MyPage'
 import QuestionDetail from '@/views/QuestionDetail'
 import QuestionList from '@/views/QuestionList'
+import QuestionPostForm from '@/views/QuestionPostForm'
 import SignUp from '@/views/SignUp'
 
 Vue.use(VueRouter)
@@ -40,6 +41,11 @@ const routes = [
     path: '/question-list',
     name: 'QuestionList',
     component: QuestionList
+  },
+  {
+    path: '/question-post-form',
+    name: 'QuestionPostForm',
+    component: QuestionPostForm
   }
 ]
 
