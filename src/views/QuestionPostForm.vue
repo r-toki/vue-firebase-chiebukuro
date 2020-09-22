@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+import firebase from '@/firebaseInit'
 const db = firebase.firestore()
 
 export default {
