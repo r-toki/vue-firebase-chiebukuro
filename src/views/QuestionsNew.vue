@@ -8,35 +8,53 @@
           required
         ></b-form-input>
       </b-form-group>
+      <b-form-group>
+        <b-form-textarea
+          v-model="question.content"
+          required
+          rows="10"
+        ></b-form-textarea>
+      </b-form-group>
       <b-button type="submit" variant="primary">Post</b-button>
     </b-form>
   </div>
 </template>
 
 <script>
-import firebase from '@/firebaseInit'
-const db = firebase.firestore()
+import { mapActions } from 'vuex'
 
 export default {
   name: 'QuestionsNew',
   data() {
     return {
       question: {
-        title: ''
+        title: '',
+        content: ''
       }
     }
   },
   methods: {
+    ...mapActions({ addQuestion: 'questions/addQuestion' }),
     async onSubmit() {
+      const newQuestion = this.createNewQuestionFromForm()
+      await this.addQuestion(newQuestion)
+      this.clearForm()
+      this.$router.push('/')
+    },
+    createNewQuestionFromForm() {
       const newQuestion = {
         title: this.question.title,
+        content: this.question.content,
+        createdAt: Date.now(),
         resolved: false
       }
-      await this.createQuestion(newQuestion)
-      this.question.title = ''
+      return newQuestion
     },
-    createQuestion(newQuestion) {
-      return db.collection('questions').add(newQuestion)
+    clearForm() {
+      this.question = {
+        title: '',
+        content: ''
+      }
     }
   }
 }
