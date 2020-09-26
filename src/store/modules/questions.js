@@ -2,33 +2,29 @@ import firebase from '@/firebaseInit'
 const db = firebase.firestore()
 
 const state = () => ({
-  all: []
+  questions: []
 })
 
 const getters = {
-  all(state) {
-    return state.all
+  questions(state) {
+    return state.questions
   }
 }
 
 const actions = {
-  async fetchAll({ dispatch, commit }) {
-    const all = []
-    const snapshot = await dispatch('getAll')
+  async fetchQuestions({ commit }) {
+    const questions = []
+    const snapshot = await db.collection('questions').get()
     snapshot.forEach(doc => {
-      all.push({ id: doc.id, title: doc.data().title })
+      questions.push({ id: doc.id, title: doc.data().title })
     })
-    commit('SET_ALL', all)
-  },
-
-  getAll() {
-    return db.collection('questions').get()
+    commit('SET_QUESTIONS', questions)
   }
 }
 
 const mutations = {
-  SET_ALL(state, all) {
-    state.all = all
+  SET_QUESTIONS(state, questions) {
+    state.questions = questions
   }
 }
 

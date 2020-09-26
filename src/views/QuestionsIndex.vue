@@ -14,13 +14,13 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'QuestionsIndex',
   methods: {
-    ...mapActions(['questions/fetchAll'])
+    ...mapActions({ fetchQuestions: 'questions/fetchQuestions' })
   },
   computed: {
-    ...mapGetters({ questions: 'questions/all' })
+    ...mapGetters({ questions: 'questions/questions' })
   },
   created() {
-    this['questions/fetchAll']()
+    this.fetchQuestions()
   }
 }
 </script>
