@@ -2,7 +2,8 @@
   <div class="questions-index">
     <b-list-group>
       <b-list-group-item v-for="question in questions" :key="question.id">
-        {{ question.title }}
+        <h5>{{ question.title }}</h5>
+        <div class="text-muted">{{ formatCreatedAt(question.createdAt) }}</div>
       </b-list-group-item>
     </b-list-group>
   </div>
@@ -10,17 +11,26 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import moment from 'moment'
 
 export default {
   name: 'QuestionsIndex',
+
   methods: {
-    ...mapActions({ fetchQuestions: 'questions/fetchQuestions' })
+    ...mapActions({ fetchQuestions: 'questions/fetchQuestions' }),
+
+    formatCreatedAt(createdAt) {
+      const formatDate = moment(createdAt).format('YYYY/MM/DD HH:mm')
+      return formatDate
+    }
   },
+
   computed: {
     ...mapGetters({ questions: 'questions/questions' })
   },
-  created() {
-    this.fetchQuestions()
+
+  async created() {
+    await this.fetchQuestions()
   }
 }
 </script>

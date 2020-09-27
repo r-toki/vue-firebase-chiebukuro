@@ -3,15 +3,14 @@
     <b-form @submit.prevent="onSubmit">
       <b-form-group label="Title:">
         <b-form-input
-          v-model="question.title"
+          v-model="questionForm.title"
           type="text"
           required
         ></b-form-input>
       </b-form-group>
-      <b-form-group>
+      <b-form-group label="Content:">
         <b-form-textarea
-          v-model="question.content"
-          required
+          v-model="questionForm.content"
           rows="10"
         ></b-form-textarea>
       </b-form-group>
@@ -25,33 +24,38 @@ import { mapActions } from 'vuex'
 
 export default {
   name: 'QuestionsNew',
+
   data() {
     return {
-      question: {
+      questionForm: {
         title: '',
         content: ''
       }
     }
   },
+
   methods: {
     ...mapActions({ addQuestion: 'questions/addQuestion' }),
+
     async onSubmit() {
-      const newQuestion = this.createNewQuestionFromForm()
-      await this.addQuestion(newQuestion)
+      const question = this.createQuestionFromForm()
+      await this.addQuestion(question)
       this.clearForm()
       this.$router.push('/')
     },
-    createNewQuestionFromForm() {
-      const newQuestion = {
-        title: this.question.title,
-        content: this.question.content,
+
+    createQuestionFromForm() {
+      const question = {
+        title: this.questionForm.title,
+        content: this.questionForm.content,
         createdAt: Date.now(),
         resolved: false
       }
-      return newQuestion
+      return question
     },
+
     clearForm() {
-      this.question = {
+      this.questionForm = {
         title: '',
         content: ''
       }
