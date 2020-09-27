@@ -1,5 +1,6 @@
 <template>
   <div class="questions-index">
+    <h1 class="text-center mt-3">Questions Index</h1>
     <b-list-group>
       <b-list-group-item v-for="question in questions" :key="question.id">
         <h5>{{ question.title }}</h5>
