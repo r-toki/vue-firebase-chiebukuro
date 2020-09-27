@@ -4,6 +4,7 @@ import QuestionsIndex from '../views/QuestionsIndex'
 import QuestionsNew from '../views/QuestionsNew'
 import SignUp from '../views/SignUp'
 import LogIn from '../views/LogIn'
+import Home from '../views/Home'
 
 Vue.use(VueRouter)
 
@@ -11,7 +12,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: QuestionsIndex
+    component: Home
   },
   {
     path: '/questions',

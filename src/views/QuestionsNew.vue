@@ -1,5 +1,6 @@
 <template>
   <div class="questions-new">
+    <h1 class="text-center mt-3">Ask a Question</h1>
     <b-form @submit.prevent="onSubmit">
       <b-form-group label="Title:">
         <b-form-input
@@ -29,7 +30,7 @@ export default {
     return {
       questionForm: {
         title: '',
-        content: ''
+        content: this.$route.query.content || ''
       }
     }
   },
