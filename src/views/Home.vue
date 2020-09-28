@@ -15,17 +15,37 @@
 
     <h2 class="mt-3">Resolved Questions</h2>
     <b-list-group>
-      <b-list-group-item></b-list-group-item>
+      <b-list-group-item
+        v-for="resolvedQuestion in resolvedQuestions"
+        :key="resolvedQuestion.id"
+        >{{ resolvedQuestion.title }}</b-list-group-item
+      >
+      <b-list-group-item>
+        <router-link to="/questions?resolved=true" class="float-right"
+          >Resolved Questions</router-link
+        >
+      </b-list-group-item>
     </b-list-group>
 
     <h2 class="mt-3">Unresolved Questions</h2>
     <b-list-group>
-      <b-list-group-item></b-list-group-item>
+      <b-list-group-item
+        v-for="unresolvedQuestion in unresolvedQuestions"
+        :key="unresolvedQuestion.id"
+        >{{ unresolvedQuestion.title }}</b-list-group-item
+      >
+      <b-list-group-item>
+        <router-link to="/questions?resolved=false" class="float-right"
+          >Unresolved Questions</router-link
+        >
+      </b-list-group-item>
     </b-list-group>
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   name: 'Home',
 
@@ -38,12 +58,29 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      fetchResolvedQuestions: 'home/fetchResolvedQuestions',
+      fetchUnresolvedQuestions: 'home/fetchUnresolvedQuestions'
+    }),
+
     onSubmit() {
       this.$router.push({
         path: '/questions/new',
         query: { content: this.questionForm.content }
       })
     }
+  },
+
+  computed: {
+    ...mapGetters({
+      resolvedQuestions: 'home/resolvedQuestions',
+      unresolvedQuestions: 'home/unresolvedQuestions'
+    })
+  },
+
+  async created() {
+    await this.fetchResolvedQuestions()
+    await this.fetchUnresolvedQuestions()
   }
 }
 </script>
