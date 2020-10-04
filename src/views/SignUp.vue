@@ -32,7 +32,6 @@
 import { mapActions } from 'vuex'
 export default {
   name: 'SignUp',
-
   data() {
     return {
       name: null,
@@ -42,22 +41,18 @@ export default {
       error: null
     }
   },
-
   computed: {
     showError() {
       return this.error !== null
     }
   },
-
   methods: {
     ...mapActions({ signUp: 'users/signUp' }),
-
     async onSubmit() {
       if (!this.checkConfirmation()) {
         this.error = 'Invalid password confirmation.'
         return
       }
-
       try {
         await this.signUp({
           email: this.email,
@@ -68,7 +63,6 @@ export default {
         this.error = err.message
       }
     },
-
     checkConfirmation() {
       return this.password === this.confirmation
     }

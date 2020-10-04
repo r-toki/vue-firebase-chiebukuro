@@ -5,6 +5,7 @@ import QuestionsNew from '../views/QuestionsNew'
 import SignUp from '../views/SignUp'
 import LogIn from '../views/LogIn'
 import Home from '../views/Home'
+import UsersShow from '../views/UsersShow'
 
 Vue.use(VueRouter)
 
@@ -33,6 +34,11 @@ const routes = [
     path: '/log-in',
     name: 'LogIn',
     component: LogIn
+  },
+  {
+    path: '/users/:id',
+    name: 'UsersShow',
+    component: UsersShow
   }
 ]
 

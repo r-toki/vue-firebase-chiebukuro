@@ -8,7 +8,7 @@
         </b-navbar-nav>
         <template v-if="loggedIn">
           <b-navbar-nav class="ml-auto">
-            <b-nav-item to="/my-page">MyPage</b-nav-item>
+            <b-nav-item :to="`/users/${currentUser.id}`">MyPage</b-nav-item>
             <b-nav-item @click.prevent="logOut">LogOut</b-nav-item>
           </b-navbar-nav>
         </template>
@@ -28,14 +28,12 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'AppHeader',
-
   computed: {
     ...mapGetters({ currentUser: 'users/currentUser' }),
     loggedIn() {
       return this.currentUser !== null
     }
   },
-
   methods: {
     ...mapActions({ logOut: 'users/logOut' })
   }

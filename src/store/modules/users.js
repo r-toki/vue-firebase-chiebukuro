@@ -21,14 +21,14 @@ const actions = {
       .collection('users')
       .doc(user.uid)
       .set({ name })
-    await context.dispatch('fetchCurrentUser', { id: user.uid })
   },
   async logIn(context, payload) {
     const { email, password } = payload
-    const { user } = await firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-    await context.dispatch('fetchCurrentUser', { id: user.uid })
+    await firebase.auth().signInWithEmailAndPassword(email, password)
+  },
+  async logOut(context) {
+    await firebase.auth().signOut()
+    context.commit('SET_CURRENT_USER', null)
   },
   async fetchCurrentUser(context, payload) {
     const { id } = payload
@@ -42,10 +42,6 @@ const actions = {
       ...currentUserDoc.data()
     }
     context.commit('SET_CURRENT_USER', currentUser)
-  },
-  async logOut(context) {
-    await firebase.auth().signOut()
-    context.commit('SET_CURRENT_USER', null)
   }
 }
 
