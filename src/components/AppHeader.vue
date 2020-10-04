@@ -6,7 +6,7 @@
           <b-nav-item to="/">Home</b-nav-item>
           <b-nav-item to="/questions/new">+Ask</b-nav-item>
         </b-navbar-nav>
-        <template v-if="currentUser.loggedIn">
+        <template v-if="loggedIn">
           <b-navbar-nav class="ml-auto">
             <b-nav-item to="/my-page">MyPage</b-nav-item>
             <b-nav-item @click.prevent="logOut">LogOut</b-nav-item>
@@ -30,11 +30,14 @@ export default {
   name: 'AppHeader',
 
   computed: {
-    ...mapGetters({ currentUser: 'currentUser/currentUser' })
+    ...mapGetters({ currentUser: 'users/currentUser' }),
+    loggedIn() {
+      return this.currentUser !== null
+    }
   },
 
   methods: {
-    ...mapActions({ logOut: 'currentUser/logOut' })
+    ...mapActions({ logOut: 'users/logOut' })
   }
 }
 </script>

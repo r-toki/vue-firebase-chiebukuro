@@ -4,15 +4,11 @@
     <b-alert :show="showError" variant="danger">{{ error }}</b-alert>
     <b-form @submit.prevent="onSubmit">
       <b-form-group label="Email:">
-        <b-form-input
-          v-model="logInForm.email"
-          type="email"
-          required
-        ></b-form-input>
+        <b-form-input v-model="email" type="email" required></b-form-input>
       </b-form-group>
       <b-form-group label="Password:">
         <b-form-input
-          v-model="logInForm.password"
+          v-model="password"
           type="password"
           required
         ></b-form-input>
@@ -30,10 +26,8 @@ export default {
 
   data() {
     return {
-      logInForm: {
-        email: '',
-        password: ''
-      },
+      email: null,
+      password: null,
       error: null
     }
   },
@@ -45,17 +39,16 @@ export default {
   },
 
   methods: {
-    ...mapActions({ logIn: 'currentUser/logIn' }),
+    ...mapActions({ logIn: 'users/logIn' }),
 
     async onSubmit() {
       try {
         await this.logIn({
-          email: this.logInForm.email,
-          password: this.logInForm.password
+          email: this.email,
+          password: this.password
         })
       } catch (err) {
         this.error = 'Invalid email and password.'
-        return
       }
     }
   }

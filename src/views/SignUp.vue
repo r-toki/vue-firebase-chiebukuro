@@ -4,29 +4,21 @@
     <b-alert :show="showError" variant="danger">{{ error }}</b-alert>
     <b-form @submit.prevent="onSubmit">
       <b-form-group label="Name:">
-        <b-form-input
-          v-model="signUpForm.name"
-          type="text"
-          required
-        ></b-form-input>
+        <b-form-input v-model="name" type="text" required></b-form-input>
       </b-form-group>
       <b-form-group label="Email:">
-        <b-form-input
-          v-model="signUpForm.email"
-          type="email"
-          required
-        ></b-form-input>
+        <b-form-input v-model="email" type="email" required></b-form-input>
       </b-form-group>
       <b-form-group label="Password:">
         <b-form-input
-          v-model="signUpForm.password"
+          v-model="password"
           type="password"
           required
         ></b-form-input>
       </b-form-group>
       <b-form-group label="Confirmation:">
         <b-form-input
-          v-model="signUpForm.confirmation"
+          v-model="confirmation"
           type="password"
           required
         ></b-form-input>
@@ -43,12 +35,10 @@ export default {
 
   data() {
     return {
-      signUpForm: {
-        name: '',
-        email: '',
-        password: '',
-        confirmation: ''
-      },
+      name: null,
+      email: null,
+      password: null,
+      confirmation: null,
       error: null
     }
   },
@@ -60,7 +50,7 @@ export default {
   },
 
   methods: {
-    ...mapActions({ signUp: 'currentUser/signUp' }),
+    ...mapActions({ signUp: 'users/signUp' }),
 
     async onSubmit() {
       if (!this.checkConfirmation()) {
@@ -70,18 +60,17 @@ export default {
 
       try {
         await this.signUp({
-          email: this.signUpForm.email,
-          password: this.signUpForm.password,
-          displayName: this.signUpForm.name
+          email: this.email,
+          password: this.password,
+          name: this.name
         })
       } catch (err) {
         this.error = err.message
-        return
       }
     },
 
     checkConfirmation() {
-      return this.signUpForm.password === this.signUpForm.confirmation
+      return this.password === this.confirmation
     }
   }
 }
