@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-import firebase from './firebaseInit'
+import firebaseApp from './firebaseInit'
 
 Vue.config.productionTip = false
 
@@ -15,7 +15,7 @@ new Vue({
   store,
   render: h => h(App),
   created() {
-    firebase.auth().onAuthStateChanged(user => {
+    firebaseApp.auth().onAuthStateChanged(user => {
       if (user) {
         store.dispatch('users/fetchCurrentUser', { id: user.uid })
         router.push({ name: 'UsersShow', params: { id: user.uid } })

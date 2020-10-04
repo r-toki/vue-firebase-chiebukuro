@@ -1,5 +1,5 @@
-import firebase from '@/firebaseInit'
-const db = firebase.firestore()
+import firebaseApp from '@/firebaseInit'
+const db = firebaseApp.firestore()
 
 const state = {
   currentUser: null
@@ -14,7 +14,7 @@ const getters = {
 const actions = {
   async signUp(context, payload) {
     const { email, password, name } = payload
-    const { user } = await firebase
+    const { user } = await firebaseApp
       .auth()
       .createUserWithEmailAndPassword(email, password)
     await db
@@ -24,10 +24,10 @@ const actions = {
   },
   async logIn(context, payload) {
     const { email, password } = payload
-    await firebase.auth().signInWithEmailAndPassword(email, password)
+    await firebaseApp.auth().signInWithEmailAndPassword(email, password)
   },
   async logOut(context) {
-    await firebase.auth().signOut()
+    await firebaseApp.auth().signOut()
     context.commit('SET_CURRENT_USER', null)
   },
   async fetchCurrentUser(context, payload) {

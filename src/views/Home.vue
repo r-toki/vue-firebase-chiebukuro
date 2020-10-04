@@ -66,7 +66,7 @@ export default {
     onSubmit() {
       this.$router.push({
         path: '/questions/new',
-        query: { content: this.questionForm.content }
+        query: { title: this.questionForm.content }
       })
     }
   },
