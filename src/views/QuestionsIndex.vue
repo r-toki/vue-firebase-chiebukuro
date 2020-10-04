@@ -3,8 +3,22 @@
     <h1 class="text-center mt-3">Questions Index</h1>
     <b-list-group>
       <b-list-group-item v-for="question in questions" :key="question.id">
-        <h5>{{ question.title }}</h5>
-        <div class="text-muted">{{ formatCreatedAt(question.createdAt) }}</div>
+        <h5>
+          <router-link
+            :to="{ name: 'QuestionsShow', params: { id: question.id } }"
+            >{{ question.title }}</router-link
+          >
+        </h5>
+        <div class="text-muted">
+          <span>
+            <router-link
+              :to="{ name: 'UsersShow', params: { id: question.user.id } }"
+              >{{ question.user.name }}</router-link
+            >
+          </span>
+          asked at
+          {{ formatCreatedAt(question.createdAt) }}
+        </div>
       </b-list-group-item>
     </b-list-group>
   </div>
@@ -16,22 +30,21 @@ import moment from 'moment'
 
 export default {
   name: 'QuestionsIndex',
-
   methods: {
     ...mapActions({ fetchQuestions: 'questions/fetchQuestions' }),
-
     formatCreatedAt(createdAt) {
-      const formatDate = moment(createdAt).format('YYYY/MM/DD HH:mm')
+      const date = createdAt.toDate()
+      const formatDate = moment(date).format('YYYY/MM/DD HH:mm')
       return formatDate
     }
   },
-
   computed: {
     ...mapGetters({ questions: 'questions/questions' })
   },
-
-  async created() {
-    await this.fetchQuestions()
+  async mounted() {
+    await this.fetchQuestions({
+      resolved: this.$route.query.resolved === 'true'
+    })
   }
 }
 </script>

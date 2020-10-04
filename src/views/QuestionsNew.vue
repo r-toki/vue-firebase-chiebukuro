@@ -31,13 +31,14 @@ export default {
   methods: {
     ...mapActions({ createQuestion: 'questions/createQuestion' }),
     async onSubmit() {
-      await this.createQuestion({
+      const question = await this.createQuestion({
         title: this.title,
         content: this.content,
         resolved: false,
-        userId: this.currentUser.id,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        user: { id: this.currentUser.id, name: this.currentUser.name }
       })
+      this.$router.push({ name: 'QuestionsShow', params: { id: question.id } })
     }
   }
 }

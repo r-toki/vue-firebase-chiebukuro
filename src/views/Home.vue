@@ -48,7 +48,6 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'Home',
-
   data() {
     return {
       questionForm: {
@@ -56,13 +55,17 @@ export default {
       }
     }
   },
-
+  computed: {
+    ...mapGetters({
+      resolvedQuestions: 'home/resolvedQuestions',
+      unresolvedQuestions: 'home/unresolvedQuestions'
+    })
+  },
   methods: {
     ...mapActions({
       fetchResolvedQuestions: 'home/fetchResolvedQuestions',
       fetchUnresolvedQuestions: 'home/fetchUnresolvedQuestions'
     }),
-
     onSubmit() {
       this.$router.push({
         path: '/questions/new',
@@ -70,15 +73,7 @@ export default {
       })
     }
   },
-
-  computed: {
-    ...mapGetters({
-      resolvedQuestions: 'home/resolvedQuestions',
-      unresolvedQuestions: 'home/unresolvedQuestions'
-    })
-  },
-
-  async created() {
+  async mounted() {
     await this.fetchResolvedQuestions()
     await this.fetchUnresolvedQuestions()
   }

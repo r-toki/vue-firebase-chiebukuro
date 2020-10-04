@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import QuestionsIndex from '../views/QuestionsIndex'
 import QuestionsNew from '../views/QuestionsNew'
+import QuestionsShow from '../views/QuestionsShow'
 import SignUp from '../views/SignUp'
 import LogIn from '../views/LogIn'
 import Home from '../views/Home'
@@ -24,6 +25,11 @@ const routes = [
     path: '/questions/new',
     name: 'QuestionsNew',
     component: QuestionsNew
+  },
+  {
+    path: '/questions/:id',
+    name: 'QuestionsShow',
+    component: QuestionsShow
   },
   {
     path: '/sign-up',

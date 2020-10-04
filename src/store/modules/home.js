@@ -1,6 +1,24 @@
 import firebase from '@/firebaseInit'
 const db = firebase.firestore()
 
+function queryOfQuestions(payload) {
+  const { resolved } = payload
+  return db
+    .collection('questions')
+    .where('resolved', '==', resolved)
+    .orderBy('createdAt', 'desc')
+    .limit(5)
+}
+
+function toQuestionsFromSnapshot(snapshot) {
+  const questions = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ref: doc.ref,
+    ...doc.data()
+  }))
+  return questions
+}
+
 const state = {
   resolvedQuestions: [],
   unresolvedQuestions: []
@@ -16,38 +34,17 @@ const getters = {
 }
 
 const actions = {
-  async fetchResolvedQuestions({ commit }) {
-    const resolvedQuestions = []
-    const snapshot = await db
-      .collection('questions')
-      .where('resolved', '==', true)
-      .orderBy('createdAt', 'desc')
-      .limit(5)
-      .get()
-    snapshot.forEach(doc => {
-      resolvedQuestions.push({
-        id: doc.id,
-        title: doc.data().title
-      })
+  fetchResolvedQuestions(context) {
+    queryOfQuestions({ resolved: true }).onSnapshot(snapshot => {
+      const questions = toQuestionsFromSnapshot(snapshot)
+      context.commit('SET_RESOLVED_QUESTIONS', questions)
     })
-    commit('SET_RESOLVED_QUESTIONS', resolvedQuestions)
   },
-
-  async fetchUnresolvedQuestions({ commit }) {
-    const unresolvedQuestions = []
-    const snapshot = await db
-      .collection('questions')
-      .where('resolved', '==', false)
-      .orderBy('createdAt', 'desc')
-      .limit(5)
-      .get()
-    snapshot.forEach(doc => {
-      unresolvedQuestions.push({
-        id: doc.id,
-        title: doc.data().title
-      })
+  fetchUnresolvedQuestions(context) {
+    queryOfQuestions({ resolved: false }).onSnapshot(snapshot => {
+      const questions = toQuestionsFromSnapshot(snapshot)
+      context.commit('SET_UNRESOLVED_QUESTIONS', questions)
     })
-    commit('SET_UNRESOLVED_QUESTIONS', unresolvedQuestions)
   }
 }
 
@@ -55,7 +52,6 @@ const mutations = {
   SET_RESOLVED_QUESTIONS(state, resolvedQuestions) {
     state.resolvedQuestions = resolvedQuestions
   },
-
   SET_UNRESOLVED_QUESTIONS(state, unresolvedQuestions) {
     state.unresolvedQuestions = unresolvedQuestions
   }

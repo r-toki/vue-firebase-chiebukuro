@@ -23,7 +23,6 @@ import { mapActions } from 'vuex'
 
 export default {
   name: 'LogIn',
-
   data() {
     return {
       email: null,
@@ -31,16 +30,13 @@ export default {
       error: null
     }
   },
-
   computed: {
     showError() {
       return this.error !== null
     }
   },
-
   methods: {
     ...mapActions({ logIn: 'users/logIn' }),
-
     async onSubmit() {
       try {
         await this.logIn({
