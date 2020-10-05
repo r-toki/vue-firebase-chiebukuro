@@ -1,18 +1,89 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <h1 class="text-center mt-3">Home</h1>
+
+    <h2>Ask a Question!</h2>
+    <b-form @submit.prevent="onSubmit">
+      <b-form-group>
+        <b-form-textarea
+          v-model="questionForm.title"
+          rows="2"
+        ></b-form-textarea>
+      </b-form-group>
+      <b-button type="submit" variant="primary">Ask</b-button>
+    </b-form>
+
+    <h2 class="mt-3">Resolved Questions</h2>
+    <b-list-group>
+      <b-list-group-item
+        v-for="resolvedQuestion in resolvedQuestions"
+        :key="resolvedQuestion.id"
+        >{{ resolvedQuestion.title }}</b-list-group-item
+      >
+      <b-list-group-item>
+        <router-link to="/questions?resolved=true" class="float-right"
+          >Resolved Questions</router-link
+        >
+      </b-list-group-item>
+    </b-list-group>
+
+    <h2 class="mt-3">Unresolved Questions</h2>
+    <b-list-group>
+      <b-list-group-item
+        v-for="unresolvedQuestion in unresolvedQuestions"
+        :key="unresolvedQuestion.id"
+        >{{ unresolvedQuestion.title }}</b-list-group-item
+      >
+      <b-list-group-item>
+        <router-link to="/questions?resolved=false" class="float-right"
+          >Unresolved Questions</router-link
+        >
+      </b-list-group-item>
+    </b-list-group>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'Home',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      questionForm: {
+        title: null
+      }
+    }
+  },
+  computed: {
+    ...mapGetters({
+      resolvedQuestions: 'home/resolvedQuestions',
+      unresolvedQuestions: 'home/unresolvedQuestions'
+    })
+  },
+  methods: {
+    ...mapActions({
+      watchResolvedQuestions: 'home/watchResolvedQuestions',
+      watchUnresolvedQuestions: 'home/watchUnresolvedQuestions'
+    }),
+    onSubmit() {
+      this.$router.push({
+        path: '/questions/new',
+        query: { title: this.questionForm.content }
+      })
+    }
+  },
+  async mounted() {
+    await this.watchResolvedQuestions()
+    await this.watchUnresolvedQuestions()
   }
 }
 </script>
+
+<style scoped>
+.home {
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
