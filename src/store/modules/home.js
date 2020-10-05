@@ -1,4 +1,4 @@
-import firebase from '@/firebaseInit'
+import firebase from '../../firebaseInit'
 const db = firebase.firestore()
 
 function queryOfQuestions(payload) {

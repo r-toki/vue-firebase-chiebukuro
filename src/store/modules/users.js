@@ -1,4 +1,4 @@
-import firebaseApp from '@/firebaseInit'
+import firebaseApp from '../../firebaseInit'
 const db = firebaseApp.firestore()
 
 const state = {
