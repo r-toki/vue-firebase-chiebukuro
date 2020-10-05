@@ -6,7 +6,7 @@
     <b-form @submit.prevent="onSubmit">
       <b-form-group>
         <b-form-textarea
-          v-model="questionForm.content"
+          v-model="questionForm.title"
           rows="2"
         ></b-form-textarea>
       </b-form-group>
@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       questionForm: {
-        content: ''
+        title: null
       }
     }
   },
@@ -63,8 +63,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchResolvedQuestions: 'home/fetchResolvedQuestions',
-      fetchUnresolvedQuestions: 'home/fetchUnresolvedQuestions'
+      watchResolvedQuestions: 'home/watchResolvedQuestions',
+      watchUnresolvedQuestions: 'home/watchUnresolvedQuestions'
     }),
     onSubmit() {
       this.$router.push({
@@ -74,8 +74,8 @@ export default {
     }
   },
   async mounted() {
-    await this.fetchResolvedQuestions()
-    await this.fetchUnresolvedQuestions()
+    await this.watchResolvedQuestions()
+    await this.watchUnresolvedQuestions()
   }
 }
 </script>

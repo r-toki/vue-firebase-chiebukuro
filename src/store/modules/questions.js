@@ -12,7 +12,7 @@ const getters = {
 }
 
 const actions = {
-  async fetchQuestions(context, payload) {
+  async watchQuestions(context, payload) {
     const { resolved } = payload
     await db
       .collection('questions')

@@ -34,13 +34,13 @@ const getters = {
 }
 
 const actions = {
-  fetchResolvedQuestions(context) {
+  watchResolvedQuestions(context) {
     queryOfQuestions({ resolved: true }).onSnapshot(snapshot => {
       const questions = toQuestionsFromSnapshot(snapshot)
       context.commit('SET_RESOLVED_QUESTIONS', questions)
     })
   },
-  fetchUnresolvedQuestions(context) {
+  watchUnresolvedQuestions(context) {
     queryOfQuestions({ resolved: false }).onSnapshot(snapshot => {
       const questions = toQuestionsFromSnapshot(snapshot)
       context.commit('SET_UNRESOLVED_QUESTIONS', questions)

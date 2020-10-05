@@ -36,7 +36,7 @@ export default {
         content: this.content,
         resolved: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        user: { id: this.currentUser.id, name: this.currentUser.name }
+        userId: this.currentUser.id
       })
       this.$router.push({ name: 'QuestionsShow', params: { id: question.id } })
     }

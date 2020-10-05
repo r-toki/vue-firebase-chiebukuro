@@ -12,8 +12,8 @@
         <div class="text-muted">
           <span>
             <router-link
-              :to="{ name: 'UsersShow', params: { id: question.user.id } }"
-              >{{ question.user.name }}</router-link
+              :to="{ name: 'UsersShow', params: { id: question.userId } }"
+              >{{ getUserById(question.userId).name }}</router-link
             >
           </span>
           asked at
@@ -30,21 +30,26 @@ import moment from 'moment'
 
 export default {
   name: 'QuestionsIndex',
+  computed: {
+    ...mapGetters({
+      questions: 'questions/questions',
+      getUserById: 'users/getUserById'
+    })
+  },
   methods: {
-    ...mapActions({ fetchQuestions: 'questions/fetchQuestions' }),
+    ...mapActions({
+      watchQuestions: 'questions/watchQuestions',
+      watchUsers: 'users/watchUsers'
+    }),
     formatCreatedAt(createdAt) {
-      const date = createdAt.toDate()
-      const formatDate = moment(date).format('YYYY/MM/DD HH:mm')
-      return formatDate
+      return moment(createdAt.toDate()).format('YYYY/MM/DD HH:mm')
     }
   },
-  computed: {
-    ...mapGetters({ questions: 'questions/questions' })
-  },
   async mounted() {
-    await this.fetchQuestions({
+    await this.watchQuestions({
       resolved: this.$route.query.resolved === 'true'
     })
+    await this.watchUsers()
   }
 }
 </script>
