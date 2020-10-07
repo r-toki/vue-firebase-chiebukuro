@@ -18,9 +18,9 @@ new Vue({
     firebaseApp.auth().onAuthStateChanged(user => {
       if (user) {
         store.dispatch('users/fetchCurrentUser', { id: user.uid })
-        router.push({ name: 'UsersShow', params: { id: user.uid } })
+        // router.push({ name: 'UsersShow', params: { id: user.uid } })
       } else {
-        router.push({ name: 'Home' })
+        // router.push({ name: 'Home' })
       }
     })
   }

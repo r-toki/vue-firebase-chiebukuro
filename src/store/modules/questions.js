@@ -1,13 +1,17 @@
-import firebaseApp from '@/firebaseInit'
+import firebaseApp from '../../firebaseInit'
 const db = firebaseApp.firestore()
 
 const state = {
-  questions: []
+  questions: [],
+  question: null
 }
 
 const getters = {
   questions(state) {
     return state.questions
+  },
+  question(state) {
+    return state.question
   }
 }
 
@@ -27,6 +31,16 @@ const actions = {
         context.commit('SET_QUESTIONS', questions)
       })
   },
+  async watchQuestion(context, payload) {
+    const { id } = payload
+    await db
+      .collection('questions')
+      .doc(id)
+      .onSnapshot(doc => {
+        const question = { id: doc.id, ref: doc.ref, ...doc.data() }
+        context.commit('SET_QUESTION', question)
+      })
+  },
   createQuestion(context, question) {
     return db.collection('questions').add(question)
   }
@@ -35,6 +49,9 @@ const actions = {
 const mutations = {
   SET_QUESTIONS(state, questions) {
     state.questions = questions
+  },
+  SET_QUESTION(state, question) {
+    state.question = question
   }
 }
 
