@@ -16,10 +16,15 @@
     <h2 class="mt-3">Resolved Questions</h2>
     <b-list-group>
       <b-list-group-item
-        v-for="resolvedQuestion in resolvedQuestions"
-        :key="resolvedQuestion.id"
-        >{{ resolvedQuestion.title }}</b-list-group-item
+        v-for="question in resolvedQuestions"
+        :key="question.id"
       >
+        <router-link
+          :to="{ name: 'QuestionsShow', params: { id: question.id } }"
+        >
+          {{ question.title }}
+        </router-link>
+      </b-list-group-item>
       <b-list-group-item>
         <router-link to="/questions?resolved=true" class="float-right"
           >Resolved Questions</router-link
@@ -30,10 +35,15 @@
     <h2 class="mt-3">Unresolved Questions</h2>
     <b-list-group>
       <b-list-group-item
-        v-for="unresolvedQuestion in unresolvedQuestions"
-        :key="unresolvedQuestion.id"
-        >{{ unresolvedQuestion.title }}</b-list-group-item
+        v-for="question in unresolvedQuestions"
+        :key="question.id"
       >
+        <router-link
+          :to="{ name: 'QuestionsShow', params: { id: question.id } }"
+        >
+          {{ question.title }}
+        </router-link>
+      </b-list-group-item>
       <b-list-group-item>
         <router-link to="/questions?resolved=false" class="float-right"
           >Unresolved Questions</router-link

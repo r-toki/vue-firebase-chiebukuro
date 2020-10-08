@@ -1,16 +1,17 @@
-import firebaseApp from '@/firebaseInit'
+import firebaseApp from '../../firebaseInit'
 const db = firebaseApp.firestore()
 
 const state = {
   currentUser: null,
-  users: []
+  users: [],
+  user: null
 }
 
 const getters = {
   currentUser(state) {
     return state.currentUser
   },
-  getUserById(state) {
+  findUserFromUsers(state) {
     return function(id) {
       return state.users.find(user => user.id === id)
     }

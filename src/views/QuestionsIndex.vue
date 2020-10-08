@@ -9,11 +9,11 @@
             >{{ question.title }}</router-link
           >
         </h5>
-        <div class="text-muted">
+        <div>
           <span>
             <router-link
               :to="{ name: 'UsersShow', params: { id: question.userId } }"
-              >{{ getUserById(question.userId).name }}</router-link
+              >{{ findUserFromUsers(question.userId).name }}</router-link
             >
           </span>
           asked at
@@ -33,7 +33,7 @@ export default {
   computed: {
     ...mapGetters({
       questions: 'questions/questions',
-      getUserById: 'users/getUserById'
+      findUserFromUsers: 'users/findUserFromUsers'
     })
   },
   methods: {
