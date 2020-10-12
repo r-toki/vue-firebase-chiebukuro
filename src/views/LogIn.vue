@@ -16,7 +16,7 @@
       <b-button type="submit" variant="primary">Log In</b-button>
     </b-form>
     <br />
-    <router-link :to="{ name: 'SignUp', query: { redirectPath } }"
+    <router-link :to="{ name: 'SignUp', query: { redirect: redirect } }"
       >Need an account?</router-link
     >
   </div>
@@ -38,8 +38,8 @@ export default {
     showError() {
       return this.error !== null
     },
-    redirectPath() {
-      return this.$route.query.redirectPath
+    redirect() {
+      return this.$route.query.redirect
     }
   },
   methods: {
@@ -47,12 +47,8 @@ export default {
     onSubmit() {
       this.logIn({ email: this.email, password: this.password })
         .then(() => {
-          if (this.redirectPath !== undefined) {
-            // todo: redirectPath がアプリ内の path か確認する必要がある
-            this.$router.push({ path: this.redirectPath })
-          } else {
-            this.$router.push({ name: 'MyPage' })
-          }
+          // この処理の前に onAuthStateChanged の call back が実行される
+          this.$router.push({ path: this.redirect })
         })
         .catch(error => {
           if (error) {

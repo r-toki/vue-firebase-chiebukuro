@@ -6,7 +6,7 @@
           <b-navbar-brand :to="{ name: 'Home' }" class="header__link--home"
             >Home</b-navbar-brand
           >
-          <b-nav-item>+Ask</b-nav-item>
+          <b-nav-item :to="{ name: 'QuestionsNew' }">+Ask</b-nav-item>
         </b-navbar-nav>
         <template v-if="isLoggedIn">
           <b-navbar-nav class="ml-auto">
@@ -37,9 +37,7 @@ export default {
     ...mapActions({ logOut: 'users/fbAuthLogOut' }),
     onClickLogOut() {
       this.logOut().then(() => {
-        if (this.$router.currentRoute.name !== 'Home') {
-          this.$router.push({ name: 'Home' })
-        }
+        this.$router.push({ name: 'Home' })
       })
     }
   }
