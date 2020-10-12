@@ -6,8 +6,8 @@ const getters = {}
 
 const actions = {
   // 以下は firebase.firestore() に関連する処理
-  fbQuestionCreate(context, { data }) {
-    return fb.questionsCollection.add(data)
+  fbQuestionCreate(context, question) {
+    return fb.questionsCollection.add(question)
   }
 }
 

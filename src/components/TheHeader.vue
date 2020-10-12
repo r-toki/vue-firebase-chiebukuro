@@ -8,7 +8,7 @@
           >
           <b-nav-item :to="{ name: 'QuestionsNew' }">+Ask</b-nav-item>
         </b-navbar-nav>
-        <template v-if="isLoggedIn">
+        <template v-if="loggedIn">
           <b-navbar-nav class="ml-auto">
             <b-nav-item>My Page</b-nav-item>
             <b-nav-item @click="onClickLogOut">Log Out</b-nav-item>
@@ -31,13 +31,15 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'TheHeader',
   computed: {
-    ...mapGetters({ isLoggedIn: 'users/isLoggedIn' })
+    ...mapGetters({ loggedIn: 'users/loggedIn' })
   },
   methods: {
     ...mapActions({ logOut: 'users/fbAuthLogOut' }),
     onClickLogOut() {
       this.logOut().then(() => {
-        this.$router.push({ name: 'Home' })
+        if (this.$router.currentRoute.fullPath !== '/') {
+          this.$router.push({ path: '/' })
+        }
       })
     }
   }

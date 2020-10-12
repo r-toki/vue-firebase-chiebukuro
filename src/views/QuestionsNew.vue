@@ -15,6 +15,8 @@
 
 <script>
 import store from '../store'
+import { mapActions, mapGetters } from 'vuex'
+import firebase from 'firebase'
 
 export default {
   name: 'QuestionsNew',
@@ -24,11 +26,28 @@ export default {
       content: null
     }
   },
+  computed: {
+    ...mapGetters({ currentUser: 'users/currentUser' })
+  },
   methods: {
-    onSubmit() {}
+    ...mapActions({ fbQuestionCreate: 'questions/fbQuestionCreate' }),
+    onSubmit() {
+      this.fbQuestionCreate({
+        title: this.title,
+        content: this.content,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        userId: this.currentUser.id,
+        bestAnswerId: null
+      }).then(question => {
+        this.$router.push({
+          name: 'QuestionsShow',
+          params: { id: question.id }
+        })
+      })
+    }
   },
   beforeRouteEnter(to, from, next) {
-    if (store.getters['users/isLoggedIn']) {
+    if (store.getters['users/loggedIn']) {
       next()
     } else {
       next({ name: 'LogIn', query: { redirect: to.fullPath } })

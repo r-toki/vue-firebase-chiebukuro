@@ -39,7 +39,7 @@ export default {
       return this.error !== null
     },
     redirect() {
-      return this.$route.query.redirect
+      return this.$route.query.redirect || '/'
     }
   },
   methods: {

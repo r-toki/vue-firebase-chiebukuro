@@ -1,13 +1,13 @@
 import * as fb from '../../common/firebase.config'
 
-const state = { currentUser: null, isLoggedIn: false }
+const state = { currentUser: null, loggedIn: false }
 
 const getters = {
   currentUser(state) {
     return state.currentUser
   },
-  isLoggedIn(state) {
-    return state.isLoggedIn
+  loggedIn(state) {
+    return state.loggedIn
   }
 }
 
@@ -35,7 +35,7 @@ const actions = {
   },
   cbOnAuthStateChanged(context, { user }) {
     if (user) {
-      context.commit('SET_IS_LOGGED_IN', true)
+      context.commit('SET_LOGGED_IN', true)
       context.dispatch('fbUserRead', user.uid).then(user => {
         context.commit('SET_CURRENT_USER', {
           id: user.id,
@@ -44,7 +44,7 @@ const actions = {
         })
       })
     } else {
-      context.commit('SET_IS_LOGGED_IN', false)
+      context.commit('SET_LOGGED_IN', false)
       context.commit('SET_CURRENT_USER', null)
     }
   },
@@ -71,8 +71,8 @@ const mutations = {
   SET_CURRENT_USER(state, currentUser) {
     state.currentUser = currentUser
   },
-  SET_IS_LOGGED_IN(state, isLoggedIn) {
-    state.isLoggedIn = isLoggedIn
+  SET_LOGGED_IN(state, loggedIn) {
+    state.loggedIn = loggedIn
   }
 }
 
