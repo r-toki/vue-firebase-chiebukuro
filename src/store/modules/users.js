@@ -23,7 +23,7 @@ const actions = {
               resolve()
             })
             .catch(() => {
-              // fbUserCreate の error は？
+              // TODO: fbUserCreate の error は？
               reject()
             })
         })
