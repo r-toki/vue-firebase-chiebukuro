@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      signUp: 'users/signUp'
+      signUp: 'auth/signUp'
     }),
     onSubmit() {
       this.signUp({
