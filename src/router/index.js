@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
 import Home from '../views/Home'
-import SignUp from '../views/SignUp'
 import LogIn from '../views/LogIn'
 import QuestionsNew from '../views/QuestionsNew'
 import QuestionsShow from '../views/QuestionsShow'
+import SignUp from '../views/SignUp'
 
 Vue.use(VueRouter)
 

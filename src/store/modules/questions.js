@@ -2,7 +2,10 @@ import * as fb from '../../common/firebase.config'
 
 const state = {
   question: null,
-  questionUnwatch: null
+  questionUnwatch: null,
+  resolvedQuestions: [],
+  unresolvedQuestions: [],
+  questions: []
 }
 
 const getters = {

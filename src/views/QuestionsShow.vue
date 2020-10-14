@@ -85,10 +85,11 @@
 </template>
 
 <script>
-import store from '../store'
-import { mapGetters, mapActions } from 'vuex'
-import moment from 'moment'
 import firebase from 'firebase'
+import moment from 'moment'
+import { mapActions, mapGetters } from 'vuex'
+
+import store from '../store'
 
 export default {
   name: 'QuestionShow',

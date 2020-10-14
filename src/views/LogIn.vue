@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import * as fb from '../common/firebase.config'
 
 export default {
   name: 'LogIn',
@@ -43,9 +43,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions({ logIn: 'users/fbAuthLogIn' }),
     onSubmit() {
-      this.logIn({ email: this.email, password: this.password })
+      fb.auth
+        .signInWithEmailAndPassword(this.email, this.password)
         .then(() => {
           // この処理の前に onAuthStateChanged の call back が実行される
           this.$router.push({ path: this.redirect })

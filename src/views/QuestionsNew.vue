@@ -14,9 +14,11 @@
 </template>
 
 <script>
-import store from '../store'
-import { mapActions, mapGetters } from 'vuex'
 import firebase from 'firebase'
+import { mapGetters } from 'vuex'
+
+import * as fb from '../common/firebase.config'
+import store from '../store'
 
 export default {
   name: 'QuestionsNew',
@@ -27,27 +29,28 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({ currentUser: 'users/currentUser' })
+    ...mapGetters({ currentUser: 'auth/currentUser' })
   },
   methods: {
-    ...mapActions({ fbQuestionCreate: 'questions/fbQuestionCreate' }),
     onSubmit() {
-      this.fbQuestionCreate({
-        title: this.title,
-        content: this.content,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        userId: this.currentUser.id,
-        bestAnswerId: null
-      }).then(question => {
-        this.$router.push({
-          name: 'QuestionsShow',
-          params: { id: question.id }
+      fb.questionsCollection
+        .add({
+          title: this.title,
+          content: this.content,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          userId: this.currentUser.id,
+          bestAnswerId: null
         })
-      })
+        .then(question => {
+          this.$router.push({
+            name: 'QuestionsShow',
+            params: { id: question.id }
+          })
+        })
     }
   },
   beforeRouteEnter(to, from, next) {
-    if (store.getters['users/loggedIn']) {
+    if (store.getters['auth/loggedIn']) {
       next()
     } else {
       next({ name: 'LogIn', query: { redirect: to.fullPath } })

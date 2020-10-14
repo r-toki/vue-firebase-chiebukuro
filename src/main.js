@@ -1,9 +1,10 @@
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import Vue from 'vue'
+
 import App from './App.vue'
+import * as fb from './common/firebase.config'
 import router from './router'
 import store from './store'
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-import * as fb from './common/firebase.config'
 
 Vue.config.productionTip = false
 
@@ -16,7 +17,7 @@ new Vue({
   render: h => h(App),
   created() {
     fb.auth.onAuthStateChanged(user => {
-      store.dispatch('users/cbOnAuthStateChanged', { user })
+      store.dispatch('auth/cbOnAuthStateChanged', user)
     })
   }
 }).$mount('#app')
