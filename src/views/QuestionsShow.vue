@@ -7,11 +7,11 @@
     <br />
 
     <b-list-group>
-      <OtherAnswer
+      <OtherAnswerItem
         v-for="answer in answers"
         :key="answer.id"
         :answer="answer"
-      ></OtherAnswer>
+      ></OtherAnswerItem>
     </b-list-group>
   </div>
 </template>
@@ -20,13 +20,13 @@
 import { mapGetters } from 'vuex'
 
 import AnswerForm from '../components/questions-show/AnswerForm'
-import OtherAnswer from '../components/questions-show/OtherAnswer'
+import OtherAnswerItem from '../components/questions-show/OtherAnswerItem'
 import QuestionItem from '../components/questions-show/QuestionItem'
 import store from '../store'
 
 export default {
   name: 'QuestionsShow',
-  components: { AnswerForm, OtherAnswer, QuestionItem },
+  components: { AnswerForm, OtherAnswerItem, QuestionItem },
   computed: {
     ...mapGetters({
       question: 'question/question',

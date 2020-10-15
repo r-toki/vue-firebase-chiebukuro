@@ -47,8 +47,10 @@ export default {
       fb.auth
         .signInWithEmailAndPassword(this.email, this.password)
         .then(() => {
-          // この処理の前に onAuthStateChanged の call back が実行される
-          this.$router.push({ path: this.redirect })
+          // or setTimeout ?
+          setImmediate(() => {
+            this.$router.push({ path: this.redirect })
+          })
         })
         .catch(error => {
           if (error) {

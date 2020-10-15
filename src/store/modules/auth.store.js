@@ -12,30 +12,6 @@ const getters = {
 }
 
 const actions = {
-  signUp(context, { name, email, password }) {
-    return new Promise((resolve, reject) => {
-      fb.auth
-        .createUserWithEmailAndPassword(email, password)
-        .then(res => {
-          const id = res.user.uid
-          fb.usersCollection
-            .doc(id)
-            .set({ name })
-            .then(() => {
-              resolve()
-            })
-            .catch(() => {
-              // user document の追加のエラーは表示しない
-              reject()
-            })
-        })
-        .catch(error => {
-          // auth のエラーは表示する
-          reject(error)
-        })
-    })
-  },
-
   cbOnAuthStateChanged(context, user) {
     if (user) {
       context.commit('SET_LOGGED_IN', true)

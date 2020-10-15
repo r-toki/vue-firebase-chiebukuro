@@ -28,6 +28,8 @@
 <script>
 import { mapActions } from 'vuex'
 
+import * as fb from '../common/firebase.config'
+
 export default {
   name: 'SignUp',
   data() {
@@ -51,19 +53,19 @@ export default {
       signUp: 'auth/signUp'
     }),
     onSubmit() {
-      this.signUp({
-        name: this.name,
-        email: this.email,
-        password: this.password
-      })
+      fb.auth
+        .createUserWithEmailAndPassword(this.email, this.password)
+        .then(res => {
+          const id = res.user.uid
+          return fb.usersCollection.doc(id).set({ name: this.name })
+        })
         .then(() => {
-          // この処理の前に onAuthStateChanged の call back が実行される
-          this.$router.push({ path: this.redirect })
+          setImmediate(() => {
+            this.$router.push({ path: this.redirect })
+          })
         })
         .catch(error => {
-          if (error) {
-            this.error = error.message
-          }
+          this.error = error.message
         })
     }
   }
