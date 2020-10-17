@@ -1,39 +1,76 @@
 <template>
-  <div class="questions-show">
-    <QuestionItem :question="question" v-if="question !== null"></QuestionItem>
+  <div class="questions-show" v-if="!isLoading">
+    <QuestionItem
+      :question="question"
+      :isResolvedQuestion="isResolvedQuestion"
+      :isCurrentUserQuestion="isCurrentUserQuestion"
+    ></QuestionItem>
     <br />
 
-    <AnswerForm :questionId="questionId"></AnswerForm>
-    <br />
+    <div v-if="!isResolvedQuestion && loggedIn">
+      <AnswerForm :questionId="question.id"></AnswerForm>
+      <br />
+    </div>
 
     <b-list-group>
+      <BestAnswerItem v-if="bestAnswer" :answer="bestAnswer"></BestAnswerItem>
       <OtherAnswerItem
-        v-for="answer in answers"
+        v-for="answer in otherAnswers"
         :key="answer.id"
         :answer="answer"
+        :isResolvedQuestion="isResolvedQuestion"
+        @selectBestAnswer="onSelectBestAnswer"
       ></OtherAnswerItem>
+      <br />
     </b-list-group>
+
+    <div v-if="!isResolvedQuestion && !loggedIn">
+      <h5 class="ml-3">
+        <router-link :to="{ name: 'LogIn', query: { redirect: $route.path } }"
+          >Log In to Answer</router-link
+        >
+      </h5>
+      <br />
+    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 
+import * as fb from '../common/firebase.config'
 import AnswerForm from '../components/questions-show/AnswerForm'
+import BestAnswerItem from '../components/questions-show/BestAnswerItem'
 import OtherAnswerItem from '../components/questions-show/OtherAnswerItem'
 import QuestionItem from '../components/questions-show/QuestionItem'
 import store from '../store'
 
 export default {
   name: 'QuestionsShow',
-  components: { AnswerForm, OtherAnswerItem, QuestionItem },
+  components: { AnswerForm, OtherAnswerItem, QuestionItem, BestAnswerItem },
   computed: {
     ...mapGetters({
+      loggedIn: 'auth/loggedIn',
+      currentUser: 'auth/currentUser',
       question: 'question/question',
-      answers: 'question/answers'
+      bestAnswer: 'question/bestAnswer',
+      otherAnswers: 'question/otherAnswers'
     }),
-    questionId() {
-      return this.$route.params.id
+    isLoading() {
+      return this.question === null
+    },
+    isResolvedQuestion() {
+      return this.question.bestAnswer.id !== null
+    },
+    isCurrentUserQuestion() {
+      return this.loggedIn && this.question.user.id === this.currentUser.id
+    }
+  },
+  methods: {
+    onSelectBestAnswer(answerId) {
+      fb.questionsCollection
+        .doc(this.question.id)
+        .update({ bestAnswer: { id: answerId } })
     }
   },
   beforeRouteEnter(to, from, next) {

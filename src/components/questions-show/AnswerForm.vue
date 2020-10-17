@@ -34,8 +34,8 @@ export default {
         .add({
           content: this.answer,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          user: { id: this.currentUser.id, ref: this.currentUser.ref },
-          question: { id: this.question.id, ref: this.question.ref }
+          user: { id: this.currentUser.id },
+          question: { id: this.question.id }
         })
         .finally(() => {
           this.answer = null

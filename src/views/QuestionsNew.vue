@@ -38,8 +38,8 @@ export default {
           title: this.title,
           content: this.content,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          user: { id: this.currentUser.id, ref: this.currentUser.ref },
-          bestAnswer: { id: null, ref: null }
+          user: { id: this.currentUser.id },
+          bestAnswer: { id: null }
         })
         .then(question => {
           this.$router.push({

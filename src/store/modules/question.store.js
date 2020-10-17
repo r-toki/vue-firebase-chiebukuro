@@ -1,18 +1,29 @@
 import * as fb from '../../common/firebase.config'
 
-const state = {
+const initialState = {
   question: null,
   unwatchQuestion: null,
   answers: [],
   unwatchAnswers: null
 }
 
+const state = {
+  ...initialState
+}
+
 const getters = {
   question(state) {
     return state.question
   },
-  answers(state) {
-    return state.answers
+  bestAnswer(state) {
+    return state.answers.find(
+      answer => answer.id === state.question.bestAnswer.id
+    )
+  },
+  otherAnswers(state) {
+    return state.answers.filter(
+      answer => answer.id !== state.question.bestAnswer.id
+    )
   }
 }
 
@@ -21,58 +32,57 @@ const actions = {
     const unwatchQuestion = fb.questionsCollection
       .doc(id)
       .onSnapshot(questionDoc => {
-        questionDoc
-          .data()
-          .user.ref.get()
+        const userId = questionDoc.data().user.id
+        fb.usersCollection
+          .doc(userId)
+          .get()
           .then(userDoc => {
             const question = Object.assign(
               {
                 id: questionDoc.id,
-                ref: questionDoc.ref,
                 ...questionDoc.data()
               },
               {
-                user: { id: userDoc.id, ref: userDoc.ref, ...userDoc.data() }
+                user: { id: userDoc.id, ...userDoc.data() }
               }
             )
             context.commit('SET_QUESTION', question)
-            context.commit('SET_UNWATCH_QUESTION', unwatchQuestion)
           })
       })
+    context.commit('SET_UNWATCH_QUESTION', unwatchQuestion)
   },
   resetQuestion(context) {
     context.commit('UNWATCH_QUESTION')
-    context.commit('SET_QUESTION', null)
-    context.commit('SET_UNWATCH_QUESTION', null)
+    context.commit('SET_QUESTION', initialState.question)
+    context.commit('SET_UNWATCH_QUESTION', initialState.unwatchQuestion)
   },
   watchAnswers(context, id) {
     const unwatchAnswers = fb.answersCollection
       .where('question.id', '==', id)
       .orderBy('createdAt', 'desc')
-      .onSnapshot(answerSnapshot => {
-        const getUsers = answerSnapshot.docs.map(answerDoc =>
-          answerDoc.data().user.ref.get()
-        )
+      .onSnapshot(answersSnapshot => {
+        const getUsers = answersSnapshot.docs.map(answerDoc => {
+          const userId = answerDoc.data().user.id
+          return fb.usersCollection.doc(userId).get()
+        })
         Promise.all(getUsers).then(users => {
-          const answers = answerSnapshot.docs.map((answerDoc, index) => ({
+          const answers = answersSnapshot.docs.map((answerDoc, index) => ({
             id: answerDoc.id,
-            ref: answerDoc.ref,
             ...answerDoc.data(),
             user: {
               id: users[index].id,
-              ref: users[index].ref,
               ...users[index].data()
             }
           }))
           context.commit('SET_ANSWERS', answers)
-          context.commit('SET_UNWATCH_ANSWERS', unwatchAnswers)
         })
       })
+    context.commit('SET_UNWATCH_ANSWERS', unwatchAnswers)
   },
   resetAnswers(context) {
     context.commit('UNWATCH_ANSWERS')
-    context.commit('SET_ANSWERS', null)
-    context.commit('SET_UNWATCH_ANSWERS', null)
+    context.commit('SET_ANSWERS', initialState.answers)
+    context.commit('SET_UNWATCH_ANSWERS', initialState.unwatchAnswers)
   }
 }
 

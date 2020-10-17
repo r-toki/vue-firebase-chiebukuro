@@ -21,7 +21,7 @@ const actions = {
     return Promise.resolve()
   },
 
-  // firebase.auth firebase.firestore の処理
+  // auth 関連で用いる firebase.auth firebase.firestore の処理の wrapper
   signUp(context, { email, password }) {
     return fb.auth.createUserWithEmailAndPassword(email, password)
   },
@@ -83,13 +83,13 @@ const actions = {
         if (redirectPath) {
           return router.push({ path: redirectPath })
         } else {
-          return router.push({ name: 'Home' }).catch(() => {})
+          // return router.push({ name: 'Home' }).catch(() => {})
         }
       })
   },
   cbLogOut(context) {
     return context.dispatch('setCurrentUser', null).then(() => {
-      return router.push({ name: 'Home' }).catch(() => {})
+      // return router.push({ name: 'Home' }).catch(() => {})
     })
   }
 }
