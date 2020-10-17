@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import * as fb from '../common/firebase.config'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'LogIn',
@@ -39,24 +39,19 @@ export default {
       return this.error !== null
     },
     redirect() {
-      return this.$route.query.redirect || '/'
+      return this.$route.query.redirect
     }
   },
   methods: {
+    ...mapActions({ logIn: 'auth/logIn' }),
     onSubmit() {
-      fb.auth
-        .signInWithEmailAndPassword(this.email, this.password)
-        .then(() => {
-          // or setTimeout ?
-          setImmediate(() => {
-            this.$router.push({ path: this.redirect })
-          })
-        })
-        .catch(error => {
+      this.logIn({ email: this.email, password: this.password }).catch(
+        error => {
           if (error) {
             this.error = error.message
           }
-        })
+        }
+      )
     }
   }
 }

@@ -26,9 +26,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
-import * as fb from '../common/firebase.config'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'TheHeader',
@@ -36,12 +34,9 @@ export default {
     ...mapGetters({ loggedIn: 'auth/loggedIn' })
   },
   methods: {
+    ...mapActions({ logOut: 'auth/logOut' }),
     onClickLogOut() {
-      fb.auth.signOut().then(() => {
-        if (this.$router.currentRoute.fullPath !== '/') {
-          this.$router.push({ path: '/' })
-        }
-      })
+      this.logOut()
     }
   }
 }
