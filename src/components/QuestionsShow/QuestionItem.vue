@@ -46,7 +46,9 @@ export default {
       }
     },
     onClickTrashIcon() {
-      this.$emit('deleteQuestion')
+      if (window.confirm('Want to delete?')) {
+        this.$emit('deleteQuestion')
+      }
     }
   }
 }
@@ -54,6 +56,6 @@ export default {
 
 <style scoped>
 .trash-icon:hover {
-  color: #343a40;
+  color: #dc3545;
 }
 </style>

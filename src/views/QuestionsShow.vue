@@ -39,10 +39,10 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 
-import AnswerForm from '../components/questions-show/AnswerForm'
-import BestAnswerItem from '../components/questions-show/BestAnswerItem'
-import OtherAnswerItem from '../components/questions-show/OtherAnswerItem'
-import QuestionItem from '../components/questions-show/QuestionItem'
+import AnswerForm from '../components/QuestionsShow/AnswerForm'
+import BestAnswerItem from '../components/QuestionsShow/BestAnswerItem'
+import OtherAnswerItem from '../components/QuestionsShow/OtherAnswerItem'
+import QuestionItem from '../components/QuestionsShow/QuestionItem'
 import store from '../store'
 
 export default {

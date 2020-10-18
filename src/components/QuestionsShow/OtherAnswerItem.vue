@@ -50,10 +50,14 @@ export default {
     onClickStarIcon() {
       // best asnwer を選ぶ処理 = question.bestAnswerId を更新する処理
       // は QuestionsShow 内で行うのが適当
-      this.$emit('selectBestAnswer', this.answer.id)
+      if (window.confirm('Want to choose as best answer?')) {
+        this.$emit('selectBestAnswer', this.answer.id)
+      }
     },
     onClickTrashIcon() {
-      this.deleteAnswer(this.answer.id)
+      if (window.confirm('Want to delete?')) {
+        this.deleteAnswer(this.answer.id)
+      }
     }
   }
 }
@@ -64,6 +68,6 @@ export default {
   color: #ffc107;
 }
 .trash-icon:hover {
-  color: #343a40;
+  color: #dc3545;
 }
 </style>
