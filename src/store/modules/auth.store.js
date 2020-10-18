@@ -83,12 +83,14 @@ const actions = {
         if (redirectPath) {
           return router.push({ path: redirectPath })
         } else {
+          // 開発中 update のたびに redirect されると不便なためコメントアウト
           // return router.push({ name: 'Home' }).catch(() => {})
         }
       })
   },
   cbLogOut(context) {
     return context.dispatch('setCurrentUser', null).then(() => {
+      // 開発中 update のたびに redirect されると不便なためコメントアウト
       // return router.push({ name: 'Home' }).catch(() => {})
     })
   }
