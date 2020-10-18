@@ -24,6 +24,9 @@ const getters = {
     return state.answers.filter(
       answer => answer.id !== state.question.bestAnswer.id
     )
+  },
+  answersCount(state) {
+    return state.answers.length
   }
 }
 
@@ -31,23 +34,18 @@ const actions = {
   watchQuestion(context, id) {
     const unwatchQuestion = fb.questionsCollection
       .doc(id)
-      .onSnapshot(questionDoc => {
+      .onSnapshot(async questionDoc => {
+        if (!questionDoc.data()) {
+          // question を削除後も watch は動くが、参照する question はないので return する
+          return
+        }
         const userId = questionDoc.data().user.id
-        fb.usersCollection
-          .doc(userId)
-          .get()
-          .then(userDoc => {
-            const question = Object.assign(
-              {
-                id: questionDoc.id,
-                ...questionDoc.data()
-              },
-              {
-                user: { id: userDoc.id, ...userDoc.data() }
-              }
-            )
-            context.commit('SET_QUESTION', question)
-          })
+        const userDoc = await fb.usersCollection.doc(userId).get()
+        const question = Object.assign(
+          { id: questionDoc.id, ...questionDoc.data() },
+          { user: { id: userDoc.id, ...userDoc.data() } }
+        )
+        context.commit('SET_QUESTION', question)
       })
     context.commit('SET_UNWATCH_QUESTION', unwatchQuestion)
   },
@@ -60,22 +58,19 @@ const actions = {
     const unwatchAnswers = fb.answersCollection
       .where('question.id', '==', id)
       .orderBy('createdAt', 'desc')
-      .onSnapshot(answersSnapshot => {
-        const getUsers = answersSnapshot.docs.map(answerDoc => {
+      .onSnapshot(async answersSnapshot => {
+        const getUsersDoc = answersSnapshot.docs.map(answerDoc => {
           const userId = answerDoc.data().user.id
           return fb.usersCollection.doc(userId).get()
         })
-        Promise.all(getUsers).then(users => {
-          const answers = answersSnapshot.docs.map((answerDoc, index) => ({
-            id: answerDoc.id,
-            ...answerDoc.data(),
-            user: {
-              id: users[index].id,
-              ...users[index].data()
-            }
-          }))
-          context.commit('SET_ANSWERS', answers)
-        })
+        const usersDoc = await Promise.all(getUsersDoc)
+        const answers = answersSnapshot.docs.map((answerDoc, index) =>
+          Object.assign(
+            { id: answerDoc.id, ...answerDoc.data() },
+            { user: { id: usersDoc[index].id, ...usersDoc[index].data() } }
+          )
+        )
+        context.commit('SET_ANSWERS', answers)
       })
     context.commit('SET_UNWATCH_ANSWERS', unwatchAnswers)
   },
@@ -83,6 +78,25 @@ const actions = {
     context.commit('UNWATCH_ANSWERS')
     context.commit('SET_ANSWERS', initialState.answers)
     context.commit('SET_UNWATCH_ANSWERS', initialState.unwatchAnswers)
+  },
+
+  // firebase.firestore の処理は vuex 経由で
+  createQuestion(context, question) {
+    return fb.questionsCollection.add(question)
+  },
+  deleteQuestion(context, questionId) {
+    return fb.questionsCollection.doc(questionId).delete()
+  },
+  selectBestAnswer(context, { questionId, bestAnswerId }) {
+    return fb.questionsCollection
+      .doc(questionId)
+      .update({ bestAnswer: { id: bestAnswerId } })
+  },
+  createAnswer(context, answer) {
+    return fb.answersCollection.add(answer)
+  },
+  deleteAnswer(context, answerId) {
+    return fb.answersCollection.doc(answerId).delete()
   }
 }
 

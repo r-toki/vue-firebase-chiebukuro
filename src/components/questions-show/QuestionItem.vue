@@ -13,12 +13,21 @@
     <div class="text-muted">
       <span>{{ question.user.name }} asked at </span>
       <span>{{ formatCreatedAt(question.createdAt || null) }}</span>
+      <span v-if="isCurrentUserQuestion && answersCount === 0">
+        /
+        <b-icon
+          icon="trash2-fill"
+          class="trash-icon"
+          @click.prevent="onClickTrashIcon"
+        ></b-icon>
+      </span>
     </div>
   </b-card>
 </template>
 
 <script>
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'QuestionItem',
@@ -27,12 +36,24 @@ export default {
     isResolvedQuestion: { type: Boolean },
     isCurrentUserQuestion: { type: Boolean }
   },
+  computed: {
+    ...mapGetters({ answersCount: 'question/answersCount' })
+  },
   methods: {
     formatCreatedAt(createdAt) {
       if (createdAt) {
         return moment(createdAt.toDate()).format('YYYY-MM-DD HH:mm')
       }
+    },
+    onClickTrashIcon() {
+      this.$emit('deleteQuestion')
     }
   }
 }
 </script>
+
+<style scoped>
+.trash-icon:hover {
+  color: #343a40;
+}
+</style>

@@ -15,9 +15,8 @@
 
 <script>
 import firebase from 'firebase'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
-import * as fb from '../common/firebase.config'
 import store from '../store'
 
 export default {
@@ -32,21 +31,20 @@ export default {
     ...mapGetters({ currentUser: 'auth/currentUser' })
   },
   methods: {
+    ...mapActions({ createQuestion: 'question/createQuestion' }),
     onSubmit() {
-      fb.questionsCollection
-        .add({
-          title: this.title,
-          content: this.content,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          user: { id: this.currentUser.id },
-          bestAnswer: { id: null }
+      this.createQuestion({
+        title: this.title,
+        content: this.content,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        user: { id: this.currentUser.id },
+        bestAnswer: { id: null }
+      }).then(question => {
+        this.$router.push({
+          name: 'QuestionsShow',
+          params: { id: question.id }
         })
-        .then(question => {
-          this.$router.push({
-            name: 'QuestionsShow',
-            params: { id: question.id }
-          })
-        })
+      })
     }
   },
   beforeRouteEnter(to, from, next) {

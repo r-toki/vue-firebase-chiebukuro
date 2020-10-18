@@ -4,6 +4,7 @@
       :question="question"
       :isResolvedQuestion="isResolvedQuestion"
       :isCurrentUserQuestion="isCurrentUserQuestion"
+      @deleteQuestion="onDeleteQuestion"
     ></QuestionItem>
     <br />
 
@@ -36,9 +37,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
-import * as fb from '../common/firebase.config'
 import AnswerForm from '../components/questions-show/AnswerForm'
 import BestAnswerItem from '../components/questions-show/BestAnswerItem'
 import OtherAnswerItem from '../components/questions-show/OtherAnswerItem'
@@ -67,10 +67,20 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      selectBestAnswer: 'question/selectBestAnswer',
+      deleteQuestion: 'question/deleteQuestion'
+    }),
     onSelectBestAnswer(answerId) {
-      fb.questionsCollection
-        .doc(this.question.id)
-        .update({ bestAnswer: { id: answerId } })
+      this.selectBestAnswer({
+        questionId: this.question.id,
+        bestAnswerId: answerId
+      })
+    },
+    onDeleteQuestion() {
+      this.deleteQuestion(this.question.id).then(() => {
+        this.$router.push({ name: 'Home' }).catch(() => {})
+      })
     }
   },
   beforeRouteEnter(to, from, next) {

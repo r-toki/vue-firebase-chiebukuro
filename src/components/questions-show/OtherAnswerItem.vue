@@ -26,9 +26,7 @@
 
 <script>
 import moment from 'moment'
-import { mapGetters } from 'vuex'
-
-import * as fb from '../../common/firebase.config'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'OhterAnswerItem',
@@ -43,6 +41,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions({ deleteAnswer: 'question/deleteAnswer' }),
     formatCreatedAt(createdAt) {
       if (createdAt) {
         return moment(createdAt.toDate()).format('YYYY-MM-DD HH:mm')
@@ -54,7 +53,7 @@ export default {
       this.$emit('selectBestAnswer', this.answer.id)
     },
     onClickTrashIcon() {
-      fb.answersCollection.doc(this.answer.id).delete()
+      this.deleteAnswer(this.answer.id)
     }
   }
 }

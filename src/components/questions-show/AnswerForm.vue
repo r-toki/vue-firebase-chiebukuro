@@ -12,9 +12,7 @@
 
 <script>
 import firebase from 'firebase'
-import { mapGetters } from 'vuex'
-
-import * as fb from '../../common/firebase.config'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'AnswerForm',
@@ -29,17 +27,16 @@ export default {
     })
   },
   methods: {
+    ...mapActions({ createAnswer: 'question/createAnswer' }),
     onSubmit() {
-      fb.answersCollection
-        .add({
-          content: this.answer,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          user: { id: this.currentUser.id },
-          question: { id: this.question.id }
-        })
-        .finally(() => {
-          this.answer = null
-        })
+      this.createAnswer({
+        content: this.answer,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        user: { id: this.currentUser.id },
+        question: { id: this.question.id }
+      }).finally(() => {
+        this.answer = null
+      })
     }
   }
 }
