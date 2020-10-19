@@ -36,63 +36,51 @@ const actions = {
       .doc(id)
       .set({ name: context.getters.currentUser.name })
   },
-  readUser(context, id) {
-    return fb.usersCollection.doc(id).get()
-  },
 
   // onAuthStateChanged の callback 処理
-  cbOnAuthStateChanged(context, user) {
+  async cbOnAuthStateChanged(context, user) {
     if (user) {
-      context.dispatch('readUser', user.uid).then(userDoc => {
-        if (userDoc.data()) {
-          return context.dispatch('cbLogIn', userDoc)
-        } else {
-          return context.dispatch('cbSignUp', user.uid)
-        }
-      })
+      const userDoc = await fb.usersCollection.doc(user.uid).get()
+      if (userDoc.data()) {
+        return context.dispatch('cbLogIn', userDoc)
+      } else {
+        return context.dispatch('cbSignUp', user.uid)
+      }
     } else {
       return context.dispatch('cbLogOut')
     }
   },
-  cbSignUp(context, id) {
-    return context
-      .dispatch('createUser', id)
-      .then(() => {
-        return context.dispatch('readUser', id)
-      })
-      .then(userDoc => {
-        return context.dispatch('setCurrentUser', {
-          id: userDoc.id,
-          ...userDoc.data()
-        })
-      })
-      .then(() => {
-        const redirectPath = router.currentRoute.query.redirect
-        if (redirectPath) {
-          return router.push({ path: redirectPath })
-        } else {
-          return router.push({ name: 'Home' }).catch(() => {})
-        }
-      })
+  async cbSignUp(context, id) {
+    await context.dispatch('createUser', id)
+    const userDoc = await fb.usersCollection.doc(id).get()
+    await context.dispatch('setCurrentUser', {
+      id: userDoc.id,
+      ...userDoc.data()
+    })
+    const redirectPath = router.currentRoute.query.redirect
+    if (redirectPath) {
+      return router.push({ path: redirectPath })
+    } else {
+      return router.push({ name: 'Home' }).catch(() => {})
+    }
   },
-  cbLogIn(context, userDoc) {
-    return context
-      .dispatch('setCurrentUser', { id: userDoc.id, ...userDoc.data() })
-      .then(() => {
-        const redirectPath = router.currentRoute.query.redirect
-        if (redirectPath) {
-          return router.push({ path: redirectPath })
-        } else {
-          // 開発中 update のたびに redirect されると不便なためコメントアウト
-          // return router.push({ name: 'Home' }).catch(() => {})
-        }
-      })
-  },
-  cbLogOut(context) {
-    return context.dispatch('setCurrentUser', null).then(() => {
+  async cbLogIn(context, userDoc) {
+    await context.dispatch('setCurrentUser', {
+      id: userDoc.id,
+      ...userDoc.data()
+    })
+    const redirectPath = router.currentRoute.query.redirect
+    if (redirectPath) {
+      return router.push({ path: redirectPath })
+    } else {
       // 開発中 update のたびに redirect されると不便なためコメントアウト
       // return router.push({ name: 'Home' }).catch(() => {})
-    })
+    }
+  },
+  async cbLogOut(context) {
+    await context.dispatch('setCurrentUser', null)
+    // 開発中 update のたびに redirect されると不便なためコメントアウト
+    // return router.push({ name: 'Home' }).catch(() => {})
   }
 }
 

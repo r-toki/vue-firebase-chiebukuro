@@ -1,5 +1,5 @@
 <template>
-  <div class="questions-show" v-if="!isLoading">
+  <div class="questions-show" v-if="question !== null">
     <QuestionItem
       :question="question"
       :isResolvedQuestion="isResolvedQuestion"
@@ -14,6 +14,7 @@
     </div>
 
     <b-list-group>
+      <h5>{{ answersHeading }}</h5>
       <BestAnswerItem v-if="bestAnswer" :answer="bestAnswer"></BestAnswerItem>
       <OtherAnswerItem
         v-for="answer in otherAnswers"
@@ -54,10 +55,12 @@ export default {
       currentUser: 'auth/currentUser',
       question: 'question/question',
       bestAnswer: 'question/bestAnswer',
-      otherAnswers: 'question/otherAnswers'
+      otherAnswers: 'question/otherAnswers',
+      answersCount: 'question/answersCount'
     }),
-    isLoading() {
-      return this.question === null
+    answersHeading() {
+      const pluralizedAnswer = this.answersCount === 1 ? 'Answer' : 'Answers'
+      return `${this.answersCount} ${pluralizedAnswer}`
     },
     isResolvedQuestion() {
       return this.question.bestAnswer.id !== null
@@ -78,9 +81,8 @@ export default {
       })
     },
     onDeleteQuestion() {
-      this.deleteQuestion(this.question.id).then(() => {
-        this.$router.push({ name: 'Home' }).catch(() => {})
-      })
+      this.deleteQuestion(this.question.id)
+      this.$router.push({ name: 'Home' }).catch(() => {})
     }
   },
   beforeRouteEnter(to, from, next) {

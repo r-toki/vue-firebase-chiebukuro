@@ -58,13 +58,14 @@ const actions = {
     const unwatchAnswers = fb.answersCollection
       .where('question.id', '==', id)
       .orderBy('createdAt', 'desc')
-      .onSnapshot(async answersSnapshot => {
-        const getUsersDoc = answersSnapshot.docs.map(answerDoc => {
+      .onSnapshot(async snapshot => {
+        const answersDoc = snapshot.docs
+        const getUsersDoc = answersDoc.map(answerDoc => {
           const userId = answerDoc.data().user.id
           return fb.usersCollection.doc(userId).get()
         })
         const usersDoc = await Promise.all(getUsersDoc)
-        const answers = answersSnapshot.docs.map((answerDoc, index) =>
+        const answers = answersDoc.map((answerDoc, index) =>
           Object.assign(
             { id: answerDoc.id, ...answerDoc.data() },
             { user: { id: usersDoc[index].id, ...usersDoc[index].data() } }
