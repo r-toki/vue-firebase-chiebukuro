@@ -84,12 +84,22 @@ const actions = {
   },
 
   // firebase.firestore の処理は vuex 経由で
-  async createQuestion(context, question) {
-    //  todo: batch にしたいけど return 値は question.id を含みたい
-    await fb.countersCollection
-      .doc('allQuestions')
-      .update({ count: firebase.firestore.FieldValue.increment(1) })
-    return fb.questionsCollection.add(question)
+  createQuestion(context, question) {
+    const batch = fb.db.batch()
+    const newQuestionRef = fb.questionsCollection.doc()
+    batch.set(newQuestionRef, question)
+    batch.update(fb.countersCollection.doc('allQuestions'), {
+      count: firebase.firestore.FieldValue.increment(1)
+    })
+    // QuestionsShow に遷移するため id を返す
+    return new Promise((resolve, reject) => {
+      batch
+        .commit()
+        .then(() => {
+          resolve(newQuestionRef.id)
+        })
+        .catch(reject)
+    })
   },
   deleteQuestion(context, questionId) {
     const batch = fb.db.batch()

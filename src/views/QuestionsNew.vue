@@ -39,10 +39,10 @@ export default {
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         user: { id: this.currentUser.id },
         bestAnswer: { id: null }
-      }).then(question => {
+      }).then(questionId => {
         this.$router.push({
           name: 'QuestionsShow',
-          params: { id: question.id }
+          params: { id: questionId }
         })
       })
     }
