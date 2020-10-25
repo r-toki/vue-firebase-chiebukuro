@@ -74,13 +74,13 @@ const actions = {
       return router.push({ path: redirectPath })
     } else {
       // 開発中 update のたびに redirect されると不便なためコメントアウト
-      return router.push({ name: 'Home' }).catch(() => {})
+      // return router.push({ name: 'Home' }).catch(() => {})
     }
   },
   async cbLogOut(context) {
     await context.dispatch('setCurrentUser', null)
     // 開発中 update のたびに redirect されると不便なためコメントアウト
-    return router.push({ name: 'Home' }).catch(() => {})
+    // return router.push({ name: 'Home' }).catch(() => {})
   }
 }
 

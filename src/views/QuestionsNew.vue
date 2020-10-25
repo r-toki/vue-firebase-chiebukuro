@@ -37,6 +37,7 @@ export default {
         title: this.title,
         content: this.content,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        resolved: false,
         user: { id: this.currentUser.id },
         bestAnswer: { id: null }
       }).then(questionId => {

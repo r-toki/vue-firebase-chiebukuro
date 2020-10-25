@@ -2,15 +2,15 @@ import firebase from 'firebase'
 
 import * as fb from '../../common/firebase.config'
 
-const initialState = {
+const initialState = () => ({
   question: null,
   unwatchQuestion: null,
   answers: [],
   unwatchAnswers: null
-}
+})
 
 const state = {
-  ...initialState
+  ...initialState()
 }
 
 const getters = {
@@ -53,8 +53,8 @@ const actions = {
   },
   resetQuestion(context) {
     context.commit('UNWATCH_QUESTION')
-    context.commit('SET_QUESTION', initialState.question)
-    context.commit('SET_UNWATCH_QUESTION', initialState.unwatchQuestion)
+    context.commit('SET_QUESTION', initialState().question)
+    context.commit('SET_UNWATCH_QUESTION', initialState().unwatchQuestion)
   },
   watchAnswers(context, id) {
     const unwatchAnswers = fb.answersCollection
@@ -79,8 +79,8 @@ const actions = {
   },
   resetAnswers(context) {
     context.commit('UNWATCH_ANSWERS')
-    context.commit('SET_ANSWERS', initialState.answers)
-    context.commit('SET_UNWATCH_ANSWERS', initialState.unwatchAnswers)
+    context.commit('SET_ANSWERS', initialState().answers)
+    context.commit('SET_UNWATCH_ANSWERS', initialState().unwatchAnswers)
   },
 
   // firebase.firestore の処理は vuex 経由で
@@ -112,6 +112,7 @@ const actions = {
   selectBestAnswer(context, { questionId, bestAnswerId }) {
     const batch = fb.db.batch()
     batch.update(fb.questionsCollection.doc(questionId), {
+      resolved: true,
       bestAnswer: { id: bestAnswerId }
     })
     batch.update(fb.countersCollection.doc('resolvedQuestions'), {

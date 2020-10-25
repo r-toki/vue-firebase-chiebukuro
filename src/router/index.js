@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 import Home from '../views/Home'
 import LogIn from '../views/LogIn'
+import QuestionsIndex from '../views/QuestionsIndex'
 import QuestionsNew from '../views/QuestionsNew'
 import QuestionsShow from '../views/QuestionsShow'
 import SignUp from '../views/SignUp'
@@ -24,6 +25,11 @@ const routes = [
     path: '/log-in',
     name: 'LogIn',
     component: LogIn
+  },
+  {
+    path: '/questions',
+    name: 'QuestionsIndex',
+    component: QuestionsIndex
   },
   {
     path: '/questions/new',
