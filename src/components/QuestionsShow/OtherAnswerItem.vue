@@ -37,7 +37,7 @@ export default {
   computed: {
     ...mapGetters({ currentUser: 'auth/currentUser' }),
     isCurrentUserAnswer() {
-      return this.answer.user.id === this.currentUser.id
+      return this.loggedIn && this.answer.user.id === this.currentUser.id
     }
   },
   methods: {

@@ -1,3 +1,5 @@
+import firebase from 'firebase'
+
 import * as fb from '../../common/firebase.config'
 
 const initialState = {
@@ -82,16 +84,30 @@ const actions = {
   },
 
   // firebase.firestore の処理は vuex 経由で
-  createQuestion(context, question) {
+  async createQuestion(context, question) {
+    //  todo: batch にしたいけど return 値は question.id を含みたい
+    await fb.countersCollection
+      .doc('allQuestions')
+      .update({ count: firebase.firestore.FieldValue.increment(1) })
     return fb.questionsCollection.add(question)
   },
   deleteQuestion(context, questionId) {
-    return fb.questionsCollection.doc(questionId).delete()
+    const batch = fb.db.batch()
+    batch.delete(fb.questionsCollection.doc(questionId))
+    batch.update(fb.countersCollection.doc('allQuestions'), {
+      count: firebase.firestore.FieldValue.increment(-1)
+    })
+    return batch.commit()
   },
   selectBestAnswer(context, { questionId, bestAnswerId }) {
-    return fb.questionsCollection
-      .doc(questionId)
-      .update({ bestAnswer: { id: bestAnswerId } })
+    const batch = fb.db.batch()
+    batch.update(fb.questionsCollection.doc(questionId), {
+      bestAnswer: { id: bestAnswerId }
+    })
+    batch.update(fb.countersCollection.doc('resolvedQuestions'), {
+      count: firebase.firestore.FieldValue.increment(1)
+    })
+    return batch.commit()
   },
   createAnswer(context, answer) {
     return fb.answersCollection.add(answer)

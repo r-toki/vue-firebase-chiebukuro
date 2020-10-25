@@ -21,5 +21,13 @@ const auth = firebase.auth()
 const usersCollection = db.collection('users')
 const questionsCollection = db.collection('questions')
 const answersCollection = db.collection('answers')
+const countersCollection = db.collection('counters')
 
-export { db, auth, usersCollection, questionsCollection, answersCollection }
+export {
+  db,
+  auth,
+  usersCollection,
+  questionsCollection,
+  answersCollection,
+  countersCollection
+}
