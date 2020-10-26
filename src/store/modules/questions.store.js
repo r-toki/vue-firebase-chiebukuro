@@ -42,10 +42,18 @@ const createQuestionsModel = async questionsDoc => {
     return fb.usersCollection.doc(userId).get()
   })
   const usersDoc = await Promise.all(getUsersDoc)
+  const getAnswersCount = questionsDoc.map(questionDoc => {
+    return fb.answersCollection
+      .where('question.id', '==', questionDoc.id)
+      .get()
+      .then(answersDoc => answersDoc.size)
+  })
+  const answersCount = await Promise.all(getAnswersCount)
   const questions = questionsDoc.map((questionDoc, index) =>
     Object.assign(
       { id: questionDoc.id, ...questionDoc.data() },
-      { user: { id: usersDoc[index].id, ...usersDoc[index].data() } }
+      { user: { id: usersDoc[index].id, ...usersDoc[index].data() } },
+      { answersCount: answersCount[index] }
     )
   )
   return Promise.resolve(questions)
@@ -105,22 +113,20 @@ const actions = {
   },
   async fetchNextQuestions(context, { resolved, pageSize }) {
     const { questions } = context.getters
-    const lastQuestion = questions[questions.length - 1]
     const nextQuestionsDoc = await getNextQuestionsDoc({
       resolved,
       pageSize,
-      lastQuestion
+      lastQuestion: questions.slice(-1)[0]
     })
     const nextQuestions = await createQuestionsModel(nextQuestionsDoc)
     context.commit('SET_QUESTIONS', nextQuestions)
   },
   async fetchPrevQuestions(context, { resolved, pageSize }) {
     const { questions } = context.getters
-    const firstQuestion = questions[0]
     const prevQuestionsDoc = await getPrevQuestionsDoc({
       resolved,
       pageSize,
-      firstQuestion
+      firstQuestion: questions[0]
     })
     const prevQuestions = await createQuestionsModel(prevQuestionsDoc)
     context.commit('SET_QUESTIONS', prevQuestions)
@@ -128,22 +134,20 @@ const actions = {
   // 次の1個が存在するかを確認
   async checkNextQuestionsExist(context, resolved) {
     const { questions } = context.getters
-    const lastQuestion = questions[questions.length - 1]
     const nextQuestionsDoc = await getNextQuestionsDoc({
       resolved,
       pageSize: 1,
-      lastQuestion
+      lastQuestion: questions.slice(-1)[0]
     })
     const nextQuestionsExist = nextQuestionsDoc.length === 1
     context.commit('SET_NEXT_QUESTIONS_EXIST', nextQuestionsExist)
   },
   async checkPrevQuestionsExist(context, resolved) {
     const { questions } = context.getters
-    const firstQuestion = questions[0]
     const prevQuestionsDoc = await getPrevQuestionsDoc({
       resolved,
       pageSize: 1,
-      firstQuestion
+      firstQuestion: questions[0]
     })
     const prevQuestionsExist = prevQuestionsDoc.length === 1
     context.commit('SET_PREV_QUESTIONS_EXIST', prevQuestionsExist)

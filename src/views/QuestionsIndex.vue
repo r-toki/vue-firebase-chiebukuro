@@ -1,29 +1,53 @@
 <template>
   <div class="questions-index" v-if="!loading">
+    <h3 class="text-center mb-3">{{ title }}</h3>
+
+    <b-list-group>
+      <b-list-group-item v-for="question in questions" :key="question.id">
+        <router-link
+          :to="{ name: 'QuestionsShow', params: { id: question.id } }"
+          >{{ question.title }}</router-link
+        >
+        <div class="text-muted">
+          <span>{{ question.user.name }} asked at </span>
+          <span>{{ formatCreatedAt(question.createdAt) }}</span>
+          <span> / </span>
+          <span>{{ pluralizeAnswersCount(question) }}</span>
+        </div>
+      </b-list-group-item>
+    </b-list-group>
+    <br />
+
     <div class="d-flex justify-content-center">
       <b-button
         @click="onClickPrevButton()"
         variant="outline-primary"
         :disabled="!prevQuestionsExist"
         class="mr-3"
-        >Prev</b-button
       >
+        <b-icon icon="arrow-left"></b-icon>
+        Prev
+      </b-button>
       <b-button
         @click="onClickNextButton()"
         variant="outline-primary"
         :disabled="!nextQuestionsExist"
-        >Next</b-button
+        class="ml-3"
       >
+        Next
+        <b-icon icon="arrow-right"></b-icon>
+      </b-button>
     </div>
   </div>
 </template>
 
 <script>
+import moment from 'moment'
 import { mapActions, mapGetters } from 'vuex'
 
 import store from '../store'
 
-const PAGE_SIZE = 3
+const PAGE_SIZE = 10
 
 export default {
   name: 'QuestionsIndex',
@@ -32,6 +56,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      questions: 'questions/questions',
       nextQuestionsExist: 'questions/nextQuestionsExist',
       prevQuestionsExist: 'questions/prevQuestionsExist'
     }),
@@ -40,6 +65,9 @@ export default {
     },
     pageSize() {
       return PAGE_SIZE
+    },
+    title() {
+      return this.resolved ? 'Resolved Questions' : 'Unresolved Questions'
     }
   },
   methods: {
@@ -62,6 +90,16 @@ export default {
         pageSize: this.pageSize
       })
       this.loading = false
+    },
+    formatCreatedAt(createdAt) {
+      if (createdAt) {
+        return moment(createdAt.toDate()).format('YYYY-MM-DD HH:mm')
+      }
+    },
+    pluralizeAnswersCount(question) {
+      const pluralizedAnswer =
+        question.answersCount === 1 ? 'Answer' : 'Answers'
+      return `${question.answersCount} ${pluralizedAnswer}`
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -85,7 +123,7 @@ export default {
 
 <style scoped>
 .questions-index {
-  width: 480px;
-  margin: auto;
+  width: 720px;
+  margin: 0 auto 20px;
 }
 </style>
