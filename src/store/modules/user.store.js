@@ -38,9 +38,12 @@ const actions = {
   },
 
   resetUser(context) {
-    context.commit('UNWATCH_USER')
+    // todo: +Ask よりログイン画面に遷移する場合に二回実行される
+    if (context.unwatchUser) {
+      context.commit('UNWATCH_USER')
+      context.commit('SET_UNWATCH_USER', initialState().unwatchUser)
+    }
     context.commit('SET_USER', initialState().user)
-    context.commit('SET_UNWATCH_USER', initialState().unwatchUser)
   },
 
   watchPostedQuestions(context, userId) {
@@ -61,12 +64,14 @@ const actions = {
   },
 
   resetPostedQuestions(context) {
-    context.commit('UNWATCH_POSTED_QUESTIONS')
+    if (context.state.unwatchPostedQuestions) {
+      context.commit('UNWATCH_POSTED_QUESTIONS')
+      context.commit(
+        'SET_UNWATCH_POSTED_QUESTIONS',
+        initialState().unwatchPostedQuestions
+      )
+    }
     context.commit('SET_POSTED_QUESTIONS', initialState().postedQuestions)
-    context.commit(
-      'SET_UNWATCH_POSTED_QUESTIONS',
-      initialState().unwatchPostedQuestions
-    )
   },
 
   watchAnsweredQuestions(context, userId) {

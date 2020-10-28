@@ -56,9 +56,11 @@ const actions = {
   },
 
   resetQuestion(context) {
-    context.commit('UNWATCH_QUESTION')
+    if (context.state.unwatchQuestion) {
+      context.commit('UNWATCH_QUESTION')
+      context.commit('SET_UNWATCH_QUESTION', initialState().unwatchQuestion)
+    }
     context.commit('SET_QUESTION', initialState().question)
-    context.commit('SET_UNWATCH_QUESTION', initialState().unwatchQuestion)
   },
 
   watchAnswers(context, id) {
@@ -84,9 +86,11 @@ const actions = {
   },
 
   resetAnswers(context) {
-    context.commit('UNWATCH_ANSWERS')
+    if (context.state.unwatchAnswers) {
+      context.commit('UNWATCH_ANSWERS')
+      context.commit('SET_UNWATCH_ANSWERS', initialState().unwatchAnswers)
+    }
     context.commit('SET_ANSWERS', initialState().answers)
-    context.commit('SET_UNWATCH_ANSWERS', initialState().unwatchAnswers)
   },
 
   // firebase.firestore の処理は vuex 経由で
