@@ -3,10 +3,8 @@
     <b-navbar type="dark" variant="dark">
       <b-container>
         <b-navbar-nav>
-          <b-navbar-brand :to="{ name: 'Home' }" class="header__link--home"
-            >Home</b-navbar-brand
-          >
-          <b-nav-item :to="{ name: 'QuestionsNew' }">+Ask</b-nav-item>
+          <b-nav-item :to="{ name: 'Home' }" class="mr-1">Home</b-nav-item>
+          <b-navbar-brand :to="{ name: 'QuestionsNew' }">+Ask</b-navbar-brand>
         </b-navbar-nav>
         <template v-if="loggedIn">
           <b-navbar-nav class="ml-auto">
