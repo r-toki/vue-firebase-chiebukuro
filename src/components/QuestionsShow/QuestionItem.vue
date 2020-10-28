@@ -11,7 +11,14 @@
       question.content
     }}</b-card-text>
     <div class="text-muted">
-      <span>{{ question.user.name }} asked at </span>
+      <span>
+        <router-link
+          :to="{ name: 'UsersShow', params: { id: question.user.id } }"
+        >
+          {{ question.user.name }}
+        </router-link>
+        asked at
+      </span>
       <span>{{ formatCreatedAt(question.createdAt || null) }}</span>
       <span v-if="isCurrentUserQuestion && answersCount === 0">
         /

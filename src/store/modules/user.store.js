@@ -1,0 +1,147 @@
+import * as fb from '../../common/firebase.config'
+
+const initialState = () => ({
+  user: null,
+  unwatchUser: null,
+
+  postedQuestions: [],
+  unwatchPostedQuestions: null,
+
+  answeredQuestions: [],
+  unwatchAnsweredQuestions: null
+})
+
+const state = {
+  ...initialState()
+}
+
+const getters = {
+  user(state) {
+    return state.user
+  },
+
+  postedQuestions(state) {
+    return state.postedQuestions
+  },
+
+  answeredQuestions(state) {
+    return state.answeredQuestions
+  }
+}
+
+const actions = {
+  watchUser(context, id) {
+    const unwatchUser = fb.usersCollection.doc(id).onSnapshot(userDoc => {
+      context.commit('SET_USER', { id: userDoc.id, ...userDoc.data() })
+    })
+    context.commit('SET_UNWATCH_USER', unwatchUser)
+  },
+
+  resetUser(context) {
+    context.commit('UNWATCH_USER')
+    context.commit('SET_USER', initialState().user)
+    context.commit('SET_UNWATCH_USER', initialState().unwatchUser)
+  },
+
+  watchPostedQuestions(context, userId) {
+    const unwatchPostedQuestions = fb.questionsCollection
+      .where('user.id', '==', userId)
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(snapshot => {
+        let questions = []
+        if (snapshot.size) {
+          questions = snapshot.docs.map(questionDoc => ({
+            id: questionDoc.id,
+            ...questionDoc.data()
+          }))
+        }
+        context.commit('SET_POSTED_QUESTIONS', questions)
+      })
+    context.commit('SET_UNWATCH_POSTED_QUESTIONS', unwatchPostedQuestions)
+  },
+
+  resetPostedQuestions(context) {
+    context.commit('UNWATCH_POSTED_QUESTIONS')
+    context.commit('SET_POSTED_QUESTIONS', initialState().postedQuestions)
+    context.commit(
+      'SET_UNWATCH_POSTED_QUESTIONS',
+      initialState().unwatchPostedQuestions
+    )
+  },
+
+  watchAnsweredQuestions(context, userId) {
+    const unwatchAnsweredQuestions = fb.questionsCollection
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(async snapshot => {
+        let answeredQuestions = []
+        const userAnswers = await fb.answersCollection
+          .where('user.id', '==', userId)
+          .get()
+        if (userAnswers.size) {
+          const userAnsweredQuestionsId = userAnswers.docs.map(
+            answer => answer.data().question.id
+          )
+          answeredQuestions = snapshot.docs
+            .filter(question => userAnsweredQuestionsId.includes(question.id))
+            .map(question => ({ id: question.id, ...question.data() }))
+        }
+        context.commit('SET_ANSWERED_QUESTIONS', answeredQuestions)
+      })
+    context.commit('SET_UNWATCH_ANSWERED_QUESTIONS', unwatchAnsweredQuestions)
+  },
+
+  resetAnsweredQuestions(context) {
+    context.commit('UNWATCH_ANSWERED_QUESTIONS')
+    context.commit('SET_ANSWERED_QUESTIONS', initialState().answeredQuestions)
+    context.commit(
+      'UNWATCH_ANSWERED_QUESTIONS',
+      initialState().unwatchAnsweredQuestions
+    )
+  }
+}
+
+const mutations = {
+  SET_USER(state, user) {
+    state.user = user
+  },
+
+  SET_UNWATCH_USER(state, unwatchUser) {
+    state.unwatchUser = unwatchUser
+  },
+
+  UNWATCH_USER(state) {
+    state.unwatchUser()
+  },
+
+  SET_POSTED_QUESTIONS(state, postedQuestions) {
+    state.postedQuestions = postedQuestions
+  },
+
+  SET_UNWATCH_POSTED_QUESTIONS(state, unwatchPostedQuestions) {
+    state.unwatchPostedQuestions = unwatchPostedQuestions
+  },
+
+  UNWATCH_POSTED_QUESTIONS(state) {
+    state.unwatchPostedQuestions()
+  },
+
+  SET_ANSWERED_QUESTIONS(state, answeredQuestions) {
+    state.answeredQuestions = answeredQuestions
+  },
+
+  SET_UNWATCH_ANSWERED_QUESTIONS(state, unwatchAnsweredQuestions) {
+    state.unwatchAnsweredQuestions = unwatchAnsweredQuestions
+  },
+
+  UNWATCH_ANSWERED_QUESTIONS(state) {
+    state.unwatchAnsweredQuestions
+  }
+}
+
+export default {
+  namespaced: true,
+  state,
+  getters,
+  actions,
+  mutations
+}

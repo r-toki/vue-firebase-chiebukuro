@@ -9,6 +9,7 @@ const getters = {
   currentUser(state) {
     return state.currentUser
   },
+
   loggedIn(state) {
     return state.currentUser !== null
   }
@@ -25,12 +26,15 @@ const actions = {
   signUp(context, { email, password }) {
     return fb.auth.createUserWithEmailAndPassword(email, password)
   },
+
   logIn(context, { email, password }) {
     return fb.auth.signInWithEmailAndPassword(email, password)
   },
+
   logOut() {
     return fb.auth.signOut()
   },
+
   createUser(context, id) {
     return fb.usersCollection
       .doc(id)
@@ -50,6 +54,7 @@ const actions = {
       return context.dispatch('cbLogOut')
     }
   },
+
   async cbSignUp(context, id) {
     await context.dispatch('createUser', id)
     const userDoc = await fb.usersCollection.doc(id).get()
@@ -64,6 +69,7 @@ const actions = {
       return router.push({ name: 'Home' }).catch(() => {})
     }
   },
+
   async cbLogIn(context, userDoc) {
     await context.dispatch('setCurrentUser', {
       id: userDoc.id,
@@ -77,6 +83,7 @@ const actions = {
       // return router.push({ name: 'Home' }).catch(() => {})
     }
   },
+
   async cbLogOut(context) {
     await context.dispatch('setCurrentUser', null)
     // 開発中 update のたびに redirect されると不便なためコメントアウト

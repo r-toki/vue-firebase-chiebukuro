@@ -5,7 +5,14 @@
     </b-badge>
     <div style="white-space: pre-line;">{{ answer.content }}</div>
     <div class="text-muted">
-      <span>{{ answer.user.name }} answered at </span>
+      <span>
+        <router-link
+          :to="{ name: 'UsersShow', params: { id: answer.user.id } }"
+        >
+          {{ answer.user.name }}
+        </router-link>
+        answered at
+      </span>
       <span>{{ formatCreatedAt(answer.createdAt) }}</span>
     </div>
   </b-list-group-item>

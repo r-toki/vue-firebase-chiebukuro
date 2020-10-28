@@ -7,6 +7,7 @@ import QuestionsIndex from '../views/QuestionsIndex'
 import QuestionsNew from '../views/QuestionsNew'
 import QuestionsShow from '../views/QuestionsShow'
 import SignUp from '../views/SignUp'
+import UsersShow from '../views/UsersShow'
 
 Vue.use(VueRouter)
 
@@ -40,6 +41,11 @@ const routes = [
     path: '/questions/:id',
     name: 'QuestionsShow',
     component: QuestionsShow
+  },
+  {
+    path: '/users/:id',
+    name: 'UsersShow',
+    component: UsersShow
   }
 ]
 

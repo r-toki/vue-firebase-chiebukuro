@@ -9,7 +9,14 @@
           >{{ question.title }}</router-link
         >
         <div class="text-muted">
-          <span>{{ question.user.name }} asked at </span>
+          <span>
+            <router-link
+              :to="{ name: 'UsersShow', params: { id: question.user.id } }"
+            >
+              {{ question.user.name }}
+            </router-link>
+            asked at
+          </span>
           <span>{{ formatCreatedAt(question.createdAt) }}</span>
           <span> / </span>
           <span>{{ pluralizeAnswersCount(question) }}</span>
