@@ -1,5 +1,42 @@
 <template>
-  <div></div>
+  <div class="users-show">
+    <h1 v-if="user" class="text-center">{{ user.name }} Page</h1>
+    <br />
+
+    <b-card no-body>
+      <b-tabs card>
+        <b-tab title="Posted Questions" active
+          ><b-card-text>
+            <b-list-group>
+              <b-list-group-item
+                v-for="question in postedQuestions"
+                :key="question.id"
+                ><router-link
+                  :to="{ name: 'QuestionsShow', params: { id: question.id } }"
+                  >{{ question.title }}</router-link
+                ></b-list-group-item
+              ></b-list-group
+            ></b-card-text
+          ></b-tab
+        >
+        <b-tab title="Answered Questions"
+          ><b-card-text>
+            <b-list-group>
+              <b-list-group-item
+                v-for="question in answeredQuestions"
+                :key="question.id"
+                ><router-link
+                  :to="{ name: 'QuestionsShow', params: { id: question.id } }"
+                  >{{ question.title }}</router-link
+                ></b-list-group-item
+              ></b-list-group
+            ></b-card-text
+          ></b-tab
+        >
+      </b-tabs>
+    </b-card>
+    <br />
+  </div>
 </template>
 
 <script>
@@ -27,3 +64,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.users-show {
+  width: 720px;
+  margin: auto;
+}
+</style>

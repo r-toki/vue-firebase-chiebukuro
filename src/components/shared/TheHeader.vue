@@ -10,7 +10,10 @@
         </b-navbar-nav>
         <template v-if="loggedIn">
           <b-navbar-nav class="ml-auto">
-            <b-nav-item>My Page</b-nav-item>
+            <b-nav-item
+              :to="{ name: 'UsersShow', params: { id: currentUser.id } }"
+              >My Page</b-nav-item
+            >
             <b-nav-item @click="onClickLogOut">Log Out</b-nav-item>
           </b-navbar-nav>
         </template>
@@ -31,7 +34,10 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'TheHeader',
   computed: {
-    ...mapGetters({ loggedIn: 'auth/loggedIn' })
+    ...mapGetters({
+      loggedIn: 'auth/loggedIn',
+      currentUser: 'auth/currentUser'
+    })
   },
   methods: {
     ...mapActions({ logOut: 'auth/logOut' }),
