@@ -29,7 +29,7 @@
       <b-button
         @click="onClickPrevButton()"
         variant="outline-primary"
-        :disabled="!prevQuestionsExist"
+        :disabled="!prevQuestionExists"
         class="mr-3"
       >
         <b-icon icon="arrow-left"></b-icon>
@@ -38,7 +38,7 @@
       <b-button
         @click="onClickNextButton()"
         variant="outline-primary"
-        :disabled="!nextQuestionsExist"
+        :disabled="!nextQuestionExists"
         class="ml-3"
       >
         Next
@@ -64,8 +64,8 @@ export default {
   computed: {
     ...mapGetters({
       questions: 'questions/questions',
-      nextQuestionsExist: 'questions/nextQuestionsExist',
-      prevQuestionsExist: 'questions/prevQuestionsExist'
+      nextQuestionExists: 'questions/nextQuestionExists',
+      prevQuestionExists: 'questions/prevQuestionExists'
     }),
     resolved() {
       return this.$route.query.resolved === 'true'
@@ -79,12 +79,12 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchNextPage: 'questions/fetchNextPage',
-      fetchPrevPage: 'questions/fetchPrevPage'
+      storeNextPage: 'questions/storeNextPage',
+      storePrevPage: 'questions/storePrevPage'
     }),
     async onClickNextButton() {
       this.loading = true
-      await this.fetchNextPage({
+      await this.storeNextPage({
         resolved: this.resolved,
         pageSize: this.pageSize
       })
@@ -92,7 +92,7 @@ export default {
     },
     async onClickPrevButton() {
       this.loading = true
-      await this.fetchPrevPage({
+      await this.storePrevPage({
         resolved: this.resolved,
         pageSize: this.pageSize
       })
@@ -112,7 +112,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     const resolved = to.query.resolved === 'true'
     store
-      .dispatch('questions/fetchFirstPage', {
+      .dispatch('questions/storeFirstPage', {
         resolved,
         pageSize: PAGE_SIZE
       })

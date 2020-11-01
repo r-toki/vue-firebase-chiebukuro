@@ -34,7 +34,7 @@ export default {
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         user: { id: this.currentUser.id },
         question: { id: this.question.id }
-      }).finally(() => {
+      }).then(() => {
         this.answer = null
       })
     }

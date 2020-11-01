@@ -11,7 +11,7 @@
         answered at
       </span>
       <span>{{ formatCreatedAt(answer.createdAt) }}</span>
-      <span v-if="!isResolvedQuestion">
+      <span v-if="!isResolvedQuestion && isCurrentUserQuestion">
         /
         <b-icon
           icon="star-fill"
@@ -39,7 +39,8 @@ export default {
   name: 'OhterAnswerItem',
   props: {
     answer: { type: Object, required: true },
-    isResolvedQuestion: { type: Boolean, required: true }
+    isResolvedQuestion: { type: Boolean, required: true },
+    isCurrentUserQuestion: { type: Boolean, required: true }
   },
   computed: {
     ...mapGetters({ currentUser: 'auth/currentUser' }),
@@ -48,7 +49,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions({ deleteAnswer: 'question/deleteAnswer' }),
+    ...mapActions({
+      deleteAnswer: 'question/deleteAnswer',
+      selectBestAnswer: 'question/selectBestAnswer'
+    }),
     formatCreatedAt(createdAt) {
       if (createdAt) {
         return moment(createdAt.toDate()).format('YYYY-MM-DD HH:mm')
@@ -58,7 +62,10 @@ export default {
       // best asnwer を選ぶ処理 = question.bestAnswerId を更新する処理
       // は QuestionsShow 内で行うのが適当
       if (window.confirm('Want to choose as best answer?')) {
-        this.$emit('selectBestAnswer', this.answer.id)
+        this.selectBestAnswer({
+          questionId: this.answer.question.id,
+          bestAnswerId: this.answer.id
+        })
       }
     },
     onClickTrashIcon() {

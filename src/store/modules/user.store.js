@@ -51,13 +51,10 @@ const actions = {
       .where('user.id', '==', userId)
       .orderBy('createdAt', 'desc')
       .onSnapshot(snapshot => {
-        let questions = []
-        if (snapshot.size) {
-          questions = snapshot.docs.map(questionDoc => ({
-            id: questionDoc.id,
-            ...questionDoc.data()
-          }))
-        }
+        const questions = snapshot.docs.map(questionDoc => ({
+          id: questionDoc.id,
+          ...questionDoc.data()
+        }))
         context.commit('SET_POSTED_QUESTIONS', questions)
       })
     context.commit('SET_UNWATCH_POSTED_QUESTIONS', unwatchPostedQuestions)
@@ -78,18 +75,17 @@ const actions = {
     const unwatchAnsweredQuestions = fb.questionsCollection
       .orderBy('createdAt', 'desc')
       .onSnapshot(async snapshot => {
-        let answeredQuestions = []
         const userAnswers = await fb.answersCollection
           .where('user.id', '==', userId)
           .get()
-        if (userAnswers.size) {
-          const userAnsweredQuestionsId = userAnswers.docs.map(
-            answer => answer.data().question.id
+        const userAnsweredQuestionIds = userAnswers.docs.map(
+          answer => answer.data().question.id
+        )
+        const answeredQuestions = snapshot.docs
+          .filter(questionDoc =>
+            userAnsweredQuestionIds.includes(questionDoc.id)
           )
-          answeredQuestions = snapshot.docs
-            .filter(question => userAnsweredQuestionsId.includes(question.id))
-            .map(question => ({ id: question.id, ...question.data() }))
-        }
+          .map(questionDoc => ({ id: questionDoc.id, ...questionDoc.data() }))
         context.commit('SET_ANSWERED_QUESTIONS', answeredQuestions)
       })
     context.commit('SET_UNWATCH_ANSWERED_QUESTIONS', unwatchAnsweredQuestions)

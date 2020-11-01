@@ -1,5 +1,3 @@
-import firebase from 'firebase'
-
 import * as fb from '../../common/firebase.config'
 
 const initialState = () => ({
@@ -68,18 +66,21 @@ const actions = {
       .where('question.id', '==', id)
       .orderBy('createdAt', 'desc')
       .onSnapshot(async snapshot => {
-        const answersDoc = snapshot.docs
-        const getUsersDoc = answersDoc.map(answerDoc => {
-          const userId = answerDoc.data().user.id
-          return fb.usersCollection.doc(userId).get()
-        })
-        const usersDoc = await Promise.all(getUsersDoc)
-        const answers = answersDoc.map((answerDoc, index) =>
-          Object.assign(
-            { id: answerDoc.id, ...answerDoc.data() },
-            { user: { id: usersDoc[index].id, ...usersDoc[index].data() } }
+        const answerDocs = snapshot.docs
+        const userDocs = await Promise.all(
+          answerDocs.map(answerDoc =>
+            fb.usersCollection.doc(answerDoc.data().user.id).get()
           )
         )
+        const answers = answerDocs.map(answerDoc => {
+          const userDoc = userDocs.find(
+            userDoc => userDoc.id === answerDoc.data().user.id
+          )
+          return Object.assign(
+            { id: answerDoc.id, ...answerDoc.data() },
+            { user: { id: userDoc.id, ...userDoc.data() } }
+          )
+        })
         context.commit('SET_ANSWERS', answers)
       })
     context.commit('SET_UNWATCH_ANSWERS', unwatchAnswers)
@@ -95,42 +96,18 @@ const actions = {
 
   // firebase.firestore の処理は vuex 経由で
   createQuestion(context, question) {
-    const batch = fb.db.batch()
-    const newQuestionRef = fb.questionsCollection.doc()
-    batch.set(newQuestionRef, question)
-    batch.update(fb.countersCollection.doc('allQuestions'), {
-      count: firebase.firestore.FieldValue.increment(1)
-    })
-    // QuestionsShow に遷移するため id を返す
-    return new Promise((resolve, reject) => {
-      batch
-        .commit()
-        .then(() => {
-          resolve(newQuestionRef.id)
-        })
-        .catch(reject)
-    })
+    return fb.questionsCollection.add(question)
   },
 
   deleteQuestion(context, questionId) {
-    const batch = fb.db.batch()
-    batch.delete(fb.questionsCollection.doc(questionId))
-    batch.update(fb.countersCollection.doc('allQuestions'), {
-      count: firebase.firestore.FieldValue.increment(-1)
-    })
-    return batch.commit()
+    return fb.questionsCollection.doc(questionId).delete()
   },
 
   selectBestAnswer(context, { questionId, bestAnswerId }) {
-    const batch = fb.db.batch()
-    batch.update(fb.questionsCollection.doc(questionId), {
+    return fb.questionsCollection.doc(questionId).update({
       resolved: true,
       bestAnswer: { id: bestAnswerId }
     })
-    batch.update(fb.countersCollection.doc('resolvedQuestions'), {
-      count: firebase.firestore.FieldValue.increment(1)
-    })
-    return batch.commit()
   },
 
   createAnswer(context, answer) {

@@ -3,8 +3,8 @@ import * as fb from '../../common/firebase.config'
 // helper
 const initialState = () => ({
   questions: [],
-  nextQuestionsExist: false,
-  prevQuestionsExist: false
+  nextQuestionExists: false,
+  prevQuestionExists: false
 })
 
 const getTopQuestionsDoc = ({ resolved, pageSize }) => {
@@ -56,7 +56,7 @@ const createQuestionsModel = async questionsDoc => {
       { answersCount: answersCount[index] }
     )
   )
-  return Promise.resolve(questions)
+  return questions
 }
 
 // store main
@@ -69,12 +69,12 @@ const getters = {
     return state.questions
   },
 
-  nextQuestionsExist(state) {
-    return state.nextQuestionsExist
+  nextQuestionExists(state) {
+    return state.nextQuestionExists
   },
 
-  prevQuestionsExist(state) {
-    return state.prevQuestionsExist
+  prevQuestionExists(state) {
+    return state.prevQuestionExists
   }
 }
 
@@ -84,40 +84,40 @@ const actions = {
     context.commit('SET_QUESTIONS', initialState().questions)
     context.commit(
       'SET_NEXT_QUESTIONS_EXIST',
-      initialState().nextQuestionsExist
+      initialState().nextQuestionExists
     )
     context.commit(
       'SET_PREV_QUESTIONS_EXIST',
-      initialState().prevQuestionsExist
+      initialState().prevQuestionExists
     )
   },
 
-  async fetchFirstPage(context, { resolved, pageSize }) {
-    await context.dispatch('fetchTopQuestions', { resolved, pageSize })
+  async storeFirstPage(context, { resolved, pageSize }) {
+    await context.dispatch('storeTopQuestions', { resolved, pageSize })
     // firstPage に対してはもちろん prevQuestions は存在しないので default の falseのまま
-    await context.dispatch('checkNextQuestionsExist', resolved)
+    await context.dispatch('checkNextQuestionExists', resolved)
   },
 
-  async fetchNextPage(context, { resolved, pageSize }) {
-    await context.dispatch('fetchNextQuestions', { resolved, pageSize })
-    await context.dispatch('checkPrevQuestionsExist', resolved)
-    await context.dispatch('checkNextQuestionsExist', resolved)
+  async storeNextPage(context, { resolved, pageSize }) {
+    await context.dispatch('storeNextQuestions', { resolved, pageSize })
+    await context.dispatch('checkPrevQuestionExists', resolved)
+    await context.dispatch('checkNextQuestionExists', resolved)
   },
 
-  async fetchPrevPage(context, { resolved, pageSize }) {
-    await context.dispatch('fetchPrevQuestions', { resolved, pageSize })
-    await context.dispatch('checkPrevQuestionsExist', resolved)
-    await context.dispatch('checkNextQuestionsExist', resolved)
+  async storePrevPage(context, { resolved, pageSize }) {
+    await context.dispatch('storePrevQuestions', { resolved, pageSize })
+    await context.dispatch('checkPrevQuestionExists', resolved)
+    await context.dispatch('checkNextQuestionExists', resolved)
   },
 
   // helper for above functions
-  async fetchTopQuestions(context, { resolved, pageSize }) {
+  async storeTopQuestions(context, { resolved, pageSize }) {
     const questionsDoc = await getTopQuestionsDoc({ resolved, pageSize })
     const questions = await createQuestionsModel(questionsDoc)
     context.commit('SET_QUESTIONS', questions)
   },
 
-  async fetchNextQuestions(context, { resolved, pageSize }) {
+  async storeNextQuestions(context, { resolved, pageSize }) {
     const nextQuestionsDoc = await getNextQuestionsDoc({
       resolved,
       pageSize,
@@ -127,7 +127,7 @@ const actions = {
     context.commit('SET_QUESTIONS', nextQuestions)
   },
 
-  async fetchPrevQuestions(context, { resolved, pageSize }) {
+  async storePrevQuestions(context, { resolved, pageSize }) {
     const prevQuestionsDoc = await getPrevQuestionsDoc({
       resolved,
       pageSize,
@@ -138,24 +138,24 @@ const actions = {
   },
 
   // 次の1個が存在するかを確認
-  async checkNextQuestionsExist(context, resolved) {
+  async checkNextQuestionExists(context, resolved) {
     const nextQuestionsDoc = await getNextQuestionsDoc({
       resolved,
       pageSize: 1,
       lastQuestion: context.getters.questions.slice(-1)[0]
     })
-    const nextQuestionsExist = nextQuestionsDoc.length === 1
-    context.commit('SET_NEXT_QUESTIONS_EXIST', nextQuestionsExist)
+    const nextQuestionExists = nextQuestionsDoc.length === 1
+    context.commit('SET_NEXT_QUESTIONS_EXIST', nextQuestionExists)
   },
 
-  async checkPrevQuestionsExist(context, resolved) {
+  async checkPrevQuestionExists(context, resolved) {
     const prevQuestionsDoc = await getPrevQuestionsDoc({
       resolved,
       pageSize: 1,
       firstQuestion: context.getters.questions[0]
     })
-    const prevQuestionsExist = prevQuestionsDoc.length === 1
-    context.commit('SET_PREV_QUESTIONS_EXIST', prevQuestionsExist)
+    const prevQuestionExists = prevQuestionsDoc.length === 1
+    context.commit('SET_PREV_QUESTIONS_EXIST', prevQuestionExists)
   }
 }
 
@@ -164,12 +164,12 @@ const mutations = {
     state.questions = questions
   },
 
-  SET_NEXT_QUESTIONS_EXIST(state, nextQuestionsExist) {
-    state.nextQuestionsExist = nextQuestionsExist
+  SET_NEXT_QUESTIONS_EXIST(state, nextQuestionExists) {
+    state.nextQuestionExists = nextQuestionExists
   },
 
-  SET_PREV_QUESTIONS_EXIST(state, prevQuestionsExist) {
-    state.prevQuestionsExist = prevQuestionsExist
+  SET_PREV_QUESTIONS_EXIST(state, prevQuestionExists) {
+    state.prevQuestionExists = prevQuestionExists
   }
 }
 

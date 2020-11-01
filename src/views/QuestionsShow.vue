@@ -4,7 +4,6 @@
       :question="question"
       :isResolvedQuestion="isResolvedQuestion"
       :isCurrentUserQuestion="isCurrentUserQuestion"
-      @deleteQuestion="onDeleteQuestion"
     ></QuestionItem>
     <br />
 
@@ -21,7 +20,7 @@
         :key="answer.id"
         :answer="answer"
         :isResolvedQuestion="isResolvedQuestion"
-        @selectBestAnswer="onSelectBestAnswer"
+        :isCurrentUserQuestion="isCurrentUserQuestion"
       ></OtherAnswerItem>
       <br />
     </b-list-group>
@@ -38,7 +37,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 import AnswerForm from '../components/QuestionsShow/AnswerForm'
 import BestAnswerItem from '../components/QuestionsShow/BestAnswerItem'
@@ -67,22 +66,6 @@ export default {
     },
     isCurrentUserQuestion() {
       return this.loggedIn && this.question.user.id === this.currentUser.id
-    }
-  },
-  methods: {
-    ...mapActions({
-      selectBestAnswer: 'question/selectBestAnswer',
-      deleteQuestion: 'question/deleteQuestion'
-    }),
-    onSelectBestAnswer(answerId) {
-      this.selectBestAnswer({
-        questionId: this.question.id,
-        bestAnswerId: answerId
-      })
-    },
-    onDeleteQuestion() {
-      this.deleteQuestion(this.question.id)
-      this.$router.push({ name: 'Home' }).catch(() => {})
     }
   },
   beforeRouteEnter(to, from, next) {

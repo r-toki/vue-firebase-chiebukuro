@@ -19,7 +19,6 @@ const actions = {
   // mutation を実行する処理
   setCurrentUser(context, user) {
     context.commit('SET_CURRENT_USER', user)
-    return Promise.resolve()
   },
 
   // auth 関連で用いる firebase.auth firebase.firestore の処理の wrapper
@@ -80,14 +79,18 @@ const actions = {
       return router.push({ path: redirectPath })
     } else {
       // 開発中 update のたびに redirect されると不便なためコメントアウト
-      // return router.push({ name: 'Home' }).catch(() => {})
+      if (process.env.NODE_ENV !== 'development') {
+        return router.push({ name: 'Home' }).catch(() => {})
+      }
     }
   },
 
   async cbLogOut(context) {
     await context.dispatch('setCurrentUser', null)
     // 開発中 update のたびに redirect されると不便なためコメントアウト
-    // return router.push({ name: 'Home' }).catch(() => {})
+    if (process.env.NODE_ENV !== 'development') {
+      return router.push({ name: 'Home' }).catch(() => {})
+    }
   }
 }
 

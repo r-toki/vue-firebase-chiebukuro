@@ -20,7 +20,7 @@
         asked at
       </span>
       <span>{{ formatCreatedAt(question.createdAt || null) }}</span>
-      <span v-if="isCurrentUserQuestion && answersCount === 0">
+      <span v-if="isCurrentUserQuestion && !hasAnswers">
         /
         <b-icon
           icon="trash2-fill"
@@ -34,7 +34,7 @@
 
 <script>
 import moment from 'moment'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'QuestionItem',
@@ -44,9 +44,13 @@ export default {
     isCurrentUserQuestion: { type: Boolean }
   },
   computed: {
-    ...mapGetters({ answersCount: 'question/answersCount' })
+    ...mapGetters({ answersCount: 'question/answersCount' }),
+    hasAnswers() {
+      return this.answersCount !== 0
+    }
   },
   methods: {
+    ...mapActions('question', ['deleteQuestion']),
     formatCreatedAt(createdAt) {
       if (createdAt) {
         return moment(createdAt.toDate()).format('YYYY-MM-DD HH:mm')
@@ -54,7 +58,9 @@ export default {
     },
     onClickTrashIcon() {
       if (window.confirm('Want to delete?')) {
-        this.$emit('deleteQuestion')
+        this.deleteQuestion(this.question.id).then(() => {
+          this.$router.push({ name: 'Home' })
+        })
       }
     }
   }
